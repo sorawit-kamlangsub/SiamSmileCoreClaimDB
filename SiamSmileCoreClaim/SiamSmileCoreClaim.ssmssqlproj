@@ -2,10 +2,32 @@
 <SqlWorkbenchSqlProject xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="SiamSmileCoreClaim">
   <Items>
     <LogicalFolder Name="Connections" Type="2" Sorted="true">
-      <Items />
+      <Items>
+        <ConnectionNode Name="147.50.148.33:devdba">
+          <Created>2026-08-25T10:37:06.1608738+07:00</Created>
+          <Type>SQL</Type>
+          <Server>147.50.148.33</Server>
+          <UserName>devdba</UserName>
+          <Authentication>SQL</Authentication>
+          <InitialDB>CoreClaim</InitialDB>
+          <LoginTimeout>30</LoginTimeout>
+          <TrustServerCertificate>False</TrustServerCertificate>
+          <EncryptionOption>False</EncryptionOption>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName>Microsoft SQL Server Management Studio - Query</ApplicationName>
+        </ConnectionNode>
+      </Items>
     </LogicalFolder>
     <LogicalFolder Name="Queries" Type="0" Sorted="true">
-      <Items />
+      <Items>
+        <FileNode Name="InsertCaseAdjustment.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:147.50.148.33:False:devdba</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>147.50.148.33</AssociatedConnSrvName>
+          <AssociatedConnUserName>devdba</AssociatedConnUserName>
+          <FullPath>InsertCaseAdjustment.sql</FullPath>
+        </FileNode>
+      </Items>
     </LogicalFolder>
     <LogicalFolder Name="Miscellaneous" Type="3" Sorted="true">
       <Items />

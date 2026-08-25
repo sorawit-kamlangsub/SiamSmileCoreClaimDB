@@ -61,12 +61,12 @@ BEGIN
     WHERE p.IsActive = 1
       AND [pi].IsActive = 1
       AND pt.IsActive = 1
+      AND pt.StatusBank IN ('e001','e002','w001')
       AND (
         @_SearchDetail = ''
         OR p.PaymentCode LIKE CONCAT('%',@_SearchDetail,'%')
         OR cl.ClaimNo LIKE CONCAT('%',@_SearchDetail,'%')
       )
-      AND pt.StatusBank IN ('e001','e002','w001')
     ORDER BY p.CreatedDate DESC
     OFFSET @IndexStart ROWS FETCH NEXT @PageSize ROWS ONLY
 END
