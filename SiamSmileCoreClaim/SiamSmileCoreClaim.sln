@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# SQL Server Management Studio Version 21
+VisualStudioVersion = 17.14.36408.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{4F2E2C19-372F-40D8-9FA7-9D2138C6997A}") = "SiamSmileCoreClaim", "SiamSmileCoreClaim.ssmssqlproj", "{E2F11C40-31B2-F6BF-EDF1-F8536154594A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release", "Release", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "V_Draft", "V_Draft", "{61DA6B9E-91E8-4882-9C88-25D0193D9715}"
+	ProjectSection(SolutionItems) = preProject
+		Release\V_Draft\1_Create_usp_InquiryMonitor_Select.sql = Release\V_Draft\1_Create_usp_InquiryMonitor_Select.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Finance", "Finance", "{A389E4F8-A6AD-4D79-BD86-B0CD429F9AD9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Procedures", "Procedures", "{3D6AC054-DA18-417E-BD98-58EA9364D8B3}"
+	ProjectSection(SolutionItems) = preProject
+		Finance\Procedures\Alter_usp_InquiryMonitor_Select.sql = Finance\Procedures\Alter_usp_InquiryMonitor_Select.sql
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Default|Default = Default|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E2F11C40-31B2-F6BF-EDF1-F8536154594A}.Default|Default.ActiveCfg = Default
+		{03446A3C-E477-42CB-8594-11DAA85D032E}.Default|Default.ActiveCfg = Default
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{61DA6B9E-91E8-4882-9C88-25D0193D9715} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{3D6AC054-DA18-417E-BD98-58EA9364D8B3} = {A389E4F8-A6AD-4D79-BD86-B0CD429F9AD9}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {989B1D21-3F78-4472-AFD4-D0EE3206C4A0}
+	EndGlobalSection
+EndGlobal
