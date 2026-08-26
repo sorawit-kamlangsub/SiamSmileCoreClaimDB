@@ -44,6 +44,7 @@ BEGIN
         ,pt.PayTransferTransactionId
         ,pt.TransferStatusId
         ,ts.TransferStatusName
+        ,pt.PayListHeaderId
         ,COUNT(p.PaymentId) OVER()     TotalCount
     FROM finance.Payment p
     LEFT JOIN finance.PaymentItem [pi]
