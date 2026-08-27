@@ -63,7 +63,9 @@ BEGIN
 		AND cp.IsActive = 1
 		AND cl.IsActive = 1
 		AND pt.PaymentStatusId IN (5)
-		  AND (
+		AND ptt.TransferStatusId IN (4,6)
+		AND ptt.StatusBank NOT IN ('e001','e002','w001')
+		AND (
 			@_SearchDetail = ''
 			OR cl.ClaimNo LIKE CONCAT('%',@_SearchDetail,'%')
 		  )
