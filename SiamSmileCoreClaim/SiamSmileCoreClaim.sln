@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release", "Release", "{02EA
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "V_Draft", "V_Draft", "{61DA6B9E-91E8-4882-9C88-25D0193D9715}"
 	ProjectSection(SolutionItems) = preProject
+		Release\V_Draft\1_Create_usp_FailedPayTransferTransaction_Select.sql = Release\V_Draft\1_Create_usp_FailedPayTransferTransaction_Select.sql
 		Release\V_Draft\1_Create_usp_InquiryMonitor_Select.sql = Release\V_Draft\1_Create_usp_InquiryMonitor_Select.sql
 	EndProjectSection
 EndProject
@@ -16,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Finance", "Finance", "{A389
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Procedures", "Procedures", "{3D6AC054-DA18-417E-BD98-58EA9364D8B3}"
 	ProjectSection(SolutionItems) = preProject
+		Finance\Procedures\Alter_usp_FailedPayTransferTransaction_Select.sql = Finance\Procedures\Alter_usp_FailedPayTransferTransaction_Select.sql
 		Finance\Procedures\Alter_usp_InquiryMonitor_Select.sql = Finance\Procedures\Alter_usp_InquiryMonitor_Select.sql
 	EndProjectSection
 EndProject
@@ -25,7 +27,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E2F11C40-31B2-F6BF-EDF1-F8536154594A}.Default|Default.ActiveCfg = Default
-		{03446A3C-E477-42CB-8594-11DAA85D032E}.Default|Default.ActiveCfg = Default
+		{CF07BFF3-75F3-4AA4-9797-85ADC8307691}.Default|Default.ActiveCfg = Default
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

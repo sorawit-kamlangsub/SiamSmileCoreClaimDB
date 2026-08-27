@@ -63,6 +63,7 @@ BEGIN
       AND [pi].IsActive = 1
       AND pt.IsActive = 1
       AND pt.StatusBank IN ('e001','e002','w001')
+      AND pt.TransferStatusId = 6
       AND (
         @_SearchDetail = ''
         OR p.PaymentCode LIKE CONCAT('%',@_SearchDetail,'%')
