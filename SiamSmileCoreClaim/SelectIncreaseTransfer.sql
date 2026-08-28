@@ -2,8 +2,9 @@
 GO
 
     SELECT 
-     claim.ClaimNo
+     [case].CaseId
      ,[case].CaseNo
+     ,claim.ClaimNo
      ,claim.CreatedDate
      ,claim.CustomerName
      
@@ -18,7 +19,4 @@ GO
         ON payable.CasePayableId = payItem.CasePayableId
     INNER JOIN finance.Payment pay
         ON payItem.PaymentId = pay.PaymentId
-    --INNER JOIN [process].CaseAdjustment adjust
-    --    ON payable.CaseAdjustmentId = adjust.CaseAdjustmentId
     WHERE pay.PaymentStatusId = 3
-    --AND adjust.AdjustmentTypeId = 2
