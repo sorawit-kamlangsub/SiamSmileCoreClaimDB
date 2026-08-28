@@ -37,10 +37,7 @@ GO
          @CaseId                UNIQUEIDENTIFIER
          ,@CaseAdjudicationId   UNIQUEIDENTIFIER
          ,@PayableCategoryId    INT
-         ,@PayeeTypeId          INT
-         ,@FromBankId           INT 
-         ,@FromBankName         VARCHAR(50) 
-         ,@FromBankAccountNo    VARCHAR(50) 
+         ,@PayeeTypeId          INT 
          ,@ToBankId             INT 
          ,@ToBankName           VARCHAR(50)
          ,@ToBankAccountNo      VARCHAR(50)
@@ -54,14 +51,10 @@ GO
     ,@CaseAdjudicationId = payable.CaseAdjudicationId
     ,@PayableCategoryId  = payable.PayableCategoryId
     ,@PayeeTypeId        = payable.PayeeTypeId
-    ,@FromBankId         = payable.FromBankId
-    ,@FromBankName       = payable.FromBankName
-    ,@FromBankAccountNo  = payable.FromBankAccountNo
     ,@ToBankId           = payable.ToBankId
     ,@ToBankName         = payable.ToBankName
     ,@ToBankAccountNo    = payable.ToBankAccountNo
     ,@CountValidate      = COUNT([case].CaseId) OVER()
-
     FROM core.[Case] [case]
     INNER JOIN core.Claim claim
         ON [case].ClaimId = claim.ClaimId
@@ -124,9 +117,6 @@ BEGIN TRY
                ,[TotalPaidAmount]
                ,[OutstandingAmount]
                ,[PayeeTypeId]
-               ,[FromBankId]
-               ,[FromBankName]
-               ,[FromBankAccountNo]
                ,[ToBankId]
                ,[ToBankName]
                ,[ToBankAccountNo]
@@ -146,9 +136,6 @@ BEGIN TRY
      ,@AdjustmentAmount     [TotalPaidAmount]
      ,@AdjustmentAmount     [OutstandingAmount]
      ,@PayeeTypeId          PayeeTypeId
-     ,@FromBankId           FromBankId
-     ,@FromBankName         FromBankName
-     ,@FromBankAccountNo    FromBankAccountNo
      ,@ToBankId             ToBankId
      ,@ToBankName           ToBankName
      ,@ToBankAccountNo      ToBankAccountNo
