@@ -23,7 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Procedures", "Procedures", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IncreaseTransferLimit", "IncreaseTransferLimit", "{DCE99821-D307-4778-ABA3-E84CBF26EB15}"
 	ProjectSection(SolutionItems) = preProject
-		SelectIncreaseTransfer.sql = SelectIncreaseTransfer.sql
+		Finance\IncreaseTransferLimit\SelectIncreaseTransfer.sql = Finance\IncreaseTransferLimit\SelectIncreaseTransfer.sql
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AdditionalTransfer", "AdditionalTransfer", "{9AF31149-F0D1-411B-A68E-EE1A90E5B852}"
