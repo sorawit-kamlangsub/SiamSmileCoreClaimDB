@@ -1,6 +1,6 @@
 ﻿USE [CoreClaim]
 GO
-/****** Object:  StoredProcedure [finance].[usp_FailedPayTransferTransaction_Select]    Script Date: 8/27/2026 4:36:26 PM ******/
+/****** Object:  StoredProcedure [finance].[usp_FailedPayTransferTransaction_Select]    Script Date: 8/31/2026 1:41:04 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -39,12 +39,14 @@ BEGIN
 		,cl.CreatedDate						ClaimCreated
 		,pt.ToAccountNo
 		,pt.ToBank
+		,pt.ToAccountName
 		,pt.TotalNetPaidAmount
 		,pt.PaymentStatusId 
 		,ptt.PayTransferTransactionId
 		,ptt.PayListHeaderId
 		,pt.PaymentCode
 		,pt.PaymentId
+		,ps.PaymentStatusNameTH
 		,COUNT(ptt.PaymentId) OVER () AS TotalCount
 	FROM [finance].Payment pt 
 			LEFT JOIN [finance].PaymentItem pit
@@ -57,6 +59,8 @@ BEGIN
 				ON cc.ClaimId = cl.ClaimId
 			LEFT JOIN [finance].PayTransferTransaction ptt
 				ON pt.PaymentId = ptt.PaymentId
+			LEFT JOIN [master].PaymentStatus ps 
+				ON pt.PaymentStatusId = ps.PaymentStatusId
 	WHERE pt.IsActive = 1
 		AND ptt.IsActive = 1
 		AND pit.IsActive = 1

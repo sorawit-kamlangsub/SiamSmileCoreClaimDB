@@ -1,6 +1,6 @@
 ﻿USE [CoreClaim]
 GO
-/****** Object:  StoredProcedure [finance].[usp_InquiryMonitor_Select]    Script Date: 8/24/2026 2:54:05 PM ******/
+/****** Object:  StoredProcedure [finance].[usp_InquiryMonitor_Select]    Script Date: 8/31/2026 1:40:21 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
