@@ -21,9 +21,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Procedures", "Procedures", 
 		Finance\Procedures\Alter_usp_InquiryMonitor_Select.sql = Finance\Procedures\Alter_usp_InquiryMonitor_Select.sql
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IncreaseTransfer", "IncreaseTransfer", "{DCE99821-D307-4778-ABA3-E84CBF26EB15}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IncreaseTransferLimit", "IncreaseTransferLimit", "{DCE99821-D307-4778-ABA3-E84CBF26EB15}"
 	ProjectSection(SolutionItems) = preProject
 		SelectIncreaseTransfer.sql = SelectIncreaseTransfer.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AdditionalTransfer", "AdditionalTransfer", "{9AF31149-F0D1-411B-A68E-EE1A90E5B852}"
+	ProjectSection(SolutionItems) = preProject
+		Finance\AdditionalTransfer\InsertCaseAdjustment.sql = Finance\AdditionalTransfer\InsertCaseAdjustment.sql
 	EndProjectSection
 EndProject
 Global
@@ -32,7 +37,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E2F11C40-31B2-F6BF-EDF1-F8536154594A}.Default|Default.ActiveCfg = Default
-		{BD7EFB12-328B-4E1D-8BB4-B574B91F7639}.Default|Default.ActiveCfg = Default
+		{B901D8AE-7D3C-4979-BE05-926443F536B8}.Default|Default.ActiveCfg = Default
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -41,6 +46,7 @@ Global
 		{61DA6B9E-91E8-4882-9C88-25D0193D9715} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{3D6AC054-DA18-417E-BD98-58EA9364D8B3} = {A389E4F8-A6AD-4D79-BD86-B0CD429F9AD9}
 		{DCE99821-D307-4778-ABA3-E84CBF26EB15} = {A389E4F8-A6AD-4D79-BD86-B0CD429F9AD9}
+		{9AF31149-F0D1-411B-A68E-EE1A90E5B852} = {A389E4F8-A6AD-4D79-BD86-B0CD429F9AD9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {989B1D21-3F78-4472-AFD4-D0EE3206C4A0}
