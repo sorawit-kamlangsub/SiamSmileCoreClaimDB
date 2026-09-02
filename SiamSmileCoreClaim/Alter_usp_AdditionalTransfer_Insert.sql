@@ -99,7 +99,6 @@ BEGIN
     INNER JOIN process.CaseAdjudication adju
         ON [case].CaseId = adju.CaseId
     WHERE pay.PaymentStatusId = 3
-    AND adju.DecisionId = 2
     AND [case].CaseId = @CaseId;
 
     SET @CaseAdjustmentId = NEWID();
@@ -109,14 +108,16 @@ BEGIN
 /* Validate Data */
 	IF @CountValidate > 1 
 	BEGIN
-		SET @Msg = N'มี CC มากกว่า 1 รายการ'
+		SET @IsResult = 0
+        SET @Msg = N'มี CC มากกว่า 1 รายการ'
         SET @CasePayable = NULL
 		GOTO RESULT;
 	END;
 
-	IF @CountValidate IS NULL
+	IF @CountValidate IS NULL OR @CountValidate = 0
 	BEGIN
-		SET @Msg = N'ไม่พบข้อมูล'
+		SET @IsResult = 0
+        SET @Msg = N'ไม่พบข้อมูล'
         SET @CasePayable = NULL
 		GOTO RESULT;
 	END;
@@ -344,7 +345,7 @@ comment this part if no return result */
     SELECT @IsResult IsResult
 		    ,@Result Result
 		    ,@Msg	 Msg
-            ,@CasePayable CasePayable;
+            ,@CasePayable CasePayableId;
 
 END
 GO
