@@ -1,7 +1,34 @@
-ï»¿USE [CoreClaim]
+USE [CoreClaim]
 GO
 
-/*Param*/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Sorawit kamlangsub
+-- Create date: 2026-09-02
+/* 
+   Update date: 
+*/
+-- Description:	Process ¡ÒÃâÍ¹à¾ÔèÁ
+-- =============================================
+CREATE PROCEDURE [finance].[usp_AdditionalTransfer_Insert]  
+/* Add the parameters for the stored procedure here
+ comment if not receive parameter*/
+			@AdjustmentReasonId INT
+            ,@TotalNetPaidAmount DECIMAL(16,2)
+            ,@CaseId UNIQUEIDENTIFIER
+            ,@UserId INT
+            ,@Remark NVARCHAR(500)
+
+AS
+BEGIN
+/*SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.*/
+	SET NOCOUNT ON;
+
+/*Test Zone
     DECLARE @AdjustmentReasonId INT
             ,@TotalNetPaidAmount DECIMAL(16,2)
             ,@CaseId UNIQUEIDENTIFIER
@@ -12,26 +39,30 @@ GO
     SET @AdjustmentReasonId = 2;
     SET @TotalNetPaidAmount = 203;
     SET @CaseId = 'D0987F5A-C10D-4590-9C37-7348F13CB4DE';
+*/
 
+	DECLARE @D2		DATETIME2(7);
 
 /*Default Declare*/
-	DECLARE @IsResult	BIT;
-	DECLARE @Result		VARCHAR(100);
+	DECLARE @IsResult	BIT			 ;
+	DECLARE @Result		VARCHAR(100) ;
 	DECLARE @Msg		NVARCHAR(500);
 
-    SET @IsResult = 1;
-    SET @Result = '';
     SET @Msg = '';
+    SET @Result = '';
+    SET @IsResult = 1;
+    SET @D2 = GETDATE();
 
 /*Setup OFF/ON Store Procedure*/
 	IF @IsResult = 0 
 	BEGIN
-		SET @Msg = N'à¸›à¸´à¸”à¹ƒà¸Šà¹‰à¸‡à¸²à¸™'
+		SET @Msg = N'»Ô´ãªé§Ò¹'
 		GOTO RESULT;
 	END;
+-----------------------------------
 
+/* TODO Select Query Here*/
 /* Setup Data*/
-    DECLARE @D2	DATETIME2(7);
     DECLARE @CaseAdjustmentId UNIQUEIDENTIFIER;
     DECLARE @CasePayable UNIQUEIDENTIFIER;
 
@@ -73,20 +104,19 @@ GO
 
     SET @CaseAdjustmentId = NEWID();
     SET @CasePayable = NEWID();
-   	SET @D2 = GETDATE();
     SELECT @CountValidate = COUNT(CaseId) FROM #Tmp
 
 /* Validate Data */
 	IF @CountValidate > 1 
 	BEGIN
-		SET @Msg = N'à¸¡à¸µ CC à¸¡à¸²à¸à¸à¸§à¹ˆà¸² 1 à¸£à¸²à¸¢à¸à¸²à¸£'
+		SET @Msg = N'ÁÕ CC ÁÒ¡¡ÇèÒ 1 ÃÒÂ¡ÒÃ'
         SET @CasePayable = NULL
 		GOTO RESULT;
 	END;
 
 	IF @CountValidate IS NULL
 	BEGIN
-		SET @Msg = N'à¹„à¸¡à¹ˆà¸žà¸šà¸‚à¹‰à¸­à¸¡à¸¹à¸¥'
+		SET @Msg = N'äÁè¾º¢éÍÁÙÅ'
         SET @CasePayable = NULL
 		GOTO RESULT;
 	END;
@@ -237,7 +267,7 @@ BEGIN TRY
         ,@CaseId                CaseId
         ,@CaseAdjudicationId    CaseAdjudicationId
         ,@D2                    AdjustmentDate
-        ,N'à¸œà¸¹à¹‰à¹ƒà¸«à¹‰à¸šà¸£à¸´ '              AdjustmentReason
+        ,N'¼ÙéãËéºÃÔ '              AdjustmentReason
         ,@TotalNetPaidAmount    AdjustmentAmount
         ,1                      IsActive
         ,@UserId                CreatedByUserId
@@ -284,22 +314,37 @@ BEGIN TRY
      ,@UserId               [UpdatedByUserId]
      ,@D2                   [UpdatedDate]
 
+	SET @IsResult	= 1;
+	SET @Msg		= N'ºÑ¹·Ö¡ ÊÓàÃç¨';
+
 	COMMIT TRANSACTION
 END TRY
 BEGIN CATCH
-    SET @IsResult = 0
-    SET @Msg = ERROR_MESSAGE()
+
+	SET @IsResult	= 0;
+	SET @Msg		= ERROR_MESSAGE();
+
 	IF @@TRANCOUNT > 0 ROLLBACK;
 END CATCH
 
-IF @IsResult = 1 BEGIN	SET @Result = 'Success' END	
-ELSE BEGIN				SET @Result = 'Failure' END;	
+-----------------------------------
 
 RESULT:
 
-SELECT @IsResult IsResult
-		,@Result Result
-		,@Msg	 Msg
-        ,@CasePayable CasePayable;
+/*Drop TempTable
+Comment below if not use TempTable*/
+	IF OBJECT_ID('tempdb..#Tmp') IS NOT NULL  DROP TABLE #Tmp;
 
-IF OBJECT_ID('tempdb..#Tmp') IS NOT NULL  DROP TABLE #Tmp;
+
+/*Return Result 
+comment this part if no return result */
+	IF @IsResult = 1 BEGIN	SET @Result = 'Success' END	
+	ELSE BEGIN				SET @Result = 'Failure' END;	
+
+    SELECT @IsResult IsResult
+		    ,@Result Result
+		    ,@Msg	 Msg
+            ,@CasePayable CasePayable;
+
+END
+GO
