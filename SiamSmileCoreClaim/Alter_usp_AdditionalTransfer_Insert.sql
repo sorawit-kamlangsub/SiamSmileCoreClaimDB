@@ -67,10 +67,7 @@ BEGIN
     DECLARE @CasePayable UNIQUEIDENTIFIER;
 
     DECLARE
-        @CaseAdjudicationId   UNIQUEIDENTIFIER
-         ,@PayableCategoryId    INT
-         ,@PayeeTypeId          INT 
-         ,@ToBankId             INT 
+         @ToBankId             INT 
          ,@ToBankName           VARCHAR(50)
          ,@ToBankAccountNo      VARCHAR(50)
          ,@CountValidate        INT ;
@@ -82,7 +79,7 @@ BEGIN
     FROM [process].CasePayable payable
     WHERE payable.CaseId = @CaseId;
 
-    SELECT 
+    SELECT DISTINCT
     payable.PayableCategoryId
     ,payable.PayeeTypeId
     ,adju.*
@@ -96,9 +93,21 @@ BEGIN
         ON payable.CasePayableId = payItem.CasePayableId
     INNER JOIN finance.Payment pay
         ON payItem.PaymentId = pay.PaymentId
-    INNER JOIN process.CaseAdjudication adju
+    INNER JOIN 
+    (
+        SELECT 
+         adju.*
+         ,ROW_NUMBER() OVER (PARTITION BY adju.CaseId ORDER BY adju.VersionNo DESC) rwId
+        FROM process.CaseAdjudication adju
+    ) adju
         ON [case].CaseId = adju.CaseId
-    WHERE pay.PaymentStatusId = 3
+    WHERE claim.IsActive = 1
+    AND [case].IsActive = 1
+    AND payable.IsActive = 1
+    AND payItem.IsActive = 1
+    AND pay.IsActive = 1
+    AND pay.PaymentStatusId = 3
+    AND adju.rwId = 1
     AND [case].CaseId = @CaseId;
 
     SET @CaseAdjustmentId = NEWID();
@@ -106,14 +115,6 @@ BEGIN
     SELECT @CountValidate = COUNT(CaseId) FROM #Tmp
 
 /* Validate Data */
-	IF @CountValidate > 1 
-	BEGIN
-		SET @IsResult = 0
-        SET @Msg = N'มี CC มากกว่า 1 รายการ'
-        SET @CasePayable = NULL
-		GOTO RESULT;
-	END;
-
 	IF @CountValidate IS NULL OR @CountValidate = 0
 	BEGIN
 		SET @IsResult = 0
@@ -266,7 +267,7 @@ BEGIN TRY
         @CaseAdjustmentId       CaseAdjustmentId
         ,2                      AdjustmentTypeId
         ,@CaseId                CaseId
-        ,@CaseAdjudicationId    CaseAdjudicationId
+        ,CaseAdjudicationId    CaseAdjudicationId
         ,@D2                    AdjustmentDate
         ,N'ผู้ให้บริ '              AdjustmentReason
         ,@TotalNetPaidAmount    AdjustmentAmount
@@ -275,6 +276,7 @@ BEGIN TRY
         ,@D2                    CreatedDate
         ,@UserId                UpdatedByUserId
         ,@D2                    UpdatedDate
+    FROM #Tmp
 
     INSERT INTO [process].[CasePayable]
                ([CasePayableId]
@@ -298,14 +300,14 @@ BEGIN TRY
     SELECT
      @CasePayable           [CasePayableId]
      ,@CaseId               CaseId
-     ,@CaseAdjudicationId   CaseAdjudicationId
+     ,CaseAdjudicationId   CaseAdjudicationId
      ,@CaseAdjustmentId     [CaseAdjustmentId]
-     ,@PayableCategoryId    PayableCategoryId
+     ,PayableCategoryId    PayableCategoryId
      ,2                     [PayableStatusId]
      ,@TotalNetPaidAmount   [PayableAmount]
      ,0                     [TotalPaidAmount]
      ,@TotalNetPaidAmount   [OutstandingAmount]
-     ,@PayeeTypeId          PayeeTypeId
+     ,PayeeTypeId          PayeeTypeId
      ,@ToBankId             ToBankId
      ,@ToBankName           ToBankName
      ,@ToBankAccountNo      ToBankAccountNo
@@ -314,6 +316,7 @@ BEGIN TRY
      ,@D2                   [CreatedDate]
      ,@UserId               [UpdatedByUserId]
      ,@D2                   [UpdatedDate]
+    FROM #Tmp
 
 	SET @IsResult	= 1;
 	SET @Msg		= N'บันทึก สำเร็จ';

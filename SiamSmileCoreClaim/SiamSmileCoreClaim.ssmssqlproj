@@ -22,9 +22,9 @@
     <LogicalFolder Name="Queries" Type="0" Sorted="true">
       <Items>
         <FileNode Name="1_Create_usp_AdditionalTransfer_Insert.sql">
-          <AssociatedConnectionMoniker />
-          <AssociatedConnSrvName />
-          <AssociatedConnUserName />
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:147.50.148.33:False:devdba</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>147.50.148.33</AssociatedConnSrvName>
+          <AssociatedConnUserName>devdba</AssociatedConnUserName>
           <FullPath>1_Create_usp_AdditionalTransfer_Insert.sql</FullPath>
         </FileNode>
         <FileNode Name="Alter_usp_AdditionalTransfer_Insert.sql">
