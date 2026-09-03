@@ -19,6 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Finance", "Finance", "{A389
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Procedures", "Procedures", "{3D6AC054-DA18-417E-BD98-58EA9364D8B3}"
 	ProjectSection(SolutionItems) = preProject
+		Finance\Procedures\Alter_usp_AdditionalTransfer_Insert.sql = Finance\Procedures\Alter_usp_AdditionalTransfer_Insert.sql
 		Finance\Procedures\Alter_usp_FailedPayTransferTransaction_Select.sql = Finance\Procedures\Alter_usp_FailedPayTransferTransaction_Select.sql
 		Finance\Procedures\Alter_usp_InquiryMonitor_Select.sql = Finance\Procedures\Alter_usp_InquiryMonitor_Select.sql
 	EndProjectSection

@@ -12,7 +12,7 @@ GO
 /* 
    Update date: 
 */
--- Description:	Process ???????????
+-- Description:	Process การโอนเพิ่ม
 -- =============================================
 ALTER PROCEDURE [finance].[usp_AdditionalTransfer_Insert]  
 /* Add the parameters for the stored procedure here
@@ -56,7 +56,7 @@ BEGIN
 /*Setup OFF/ON Store Procedure*/
 	IF @IsResult = 0 
 	BEGIN
-		SET @Msg = N'?????????'
+		SET @Msg = N'ปิดใช้งาน'
 		GOTO RESULT;
 	END;
 -----------------------------------
@@ -119,7 +119,7 @@ BEGIN
 	IF @CountValidate IS NULL OR @CountValidate = 0
 	BEGIN
 		SET @IsResult = 0
-        SET @Msg = N'???????????'
+        SET @Msg = N'ไม่พบข้อมูล'
         SET @CasePayable = NULL
 		GOTO RESULT;
 	END;
@@ -270,7 +270,7 @@ BEGIN TRY
         ,@CaseId                CaseId
         ,CaseAdjudicationId    CaseAdjudicationId
         ,@D2                    AdjustmentDate
-        ,N'????????? '              AdjustmentReason
+        ,N'ผู้ให้บริ '              AdjustmentReason
         ,@TotalNetPaidAmount    AdjustmentAmount
         ,1                      IsActive
         ,@UserId                CreatedByUserId
@@ -346,7 +346,7 @@ BEGIN TRY
     FROM #Tmp
 
 	SET @IsResult	= 1;
-	SET @Msg		= N'?????? ??????';
+	SET @Msg		= N'บันทึก สำเร็จ';
 
 	COMMIT TRANSACTION
 END TRY
