@@ -1,4 +1,4 @@
-USE [CoreClaim]
+ÔªøUSE [CoreClaim]
 GO
 
 SET ANSI_NULLS ON
@@ -12,7 +12,7 @@ GO
 /* 
    Update date: 
 */
--- Description:	Process °“√‚Õπ‡æ‘Ë¡
+-- Description:	Process ‡∏Å‡∏≤‡∏£‡πÇ‡∏≠‡∏ô‡πÄ‡∏û‡∏¥‡πà‡∏°
 -- =============================================
 ALTER PROCEDURE [finance].[usp_AdditionalTransfer_Insert]  
 /* Add the parameters for the stored procedure here
@@ -56,7 +56,7 @@ BEGIN
 /*Setup OFF/ON Store Procedure*/
 	IF @IsResult = 0 
 	BEGIN
-		SET @Msg = N'ª‘¥„™Èß“π'
+		SET @Msg = N'‡∏õ‡∏¥‡∏î‡πÉ‡∏ä‡πâ‡∏á‡∏≤‡∏ô'
 		GOTO RESULT;
 	END;
 -----------------------------------
@@ -119,7 +119,7 @@ BEGIN
 	IF @CountValidate IS NULL OR @CountValidate = 0
 	BEGIN
 		SET @IsResult = 0
-        SET @Msg = N'‰¡Ëæ∫¢ÈÕ¡Ÿ≈'
+        SET @Msg = N'‡πÑ‡∏°‡πà‡∏û‡∏ö‡∏Ç‡πâ‡∏≠‡∏°‡∏π‡∏•'
         SET @CasePayable = NULL
 		GOTO RESULT;
 	END;
@@ -270,7 +270,7 @@ BEGIN TRY
         ,@CaseId                CaseId
         ,CaseAdjudicationId    CaseAdjudicationId
         ,@D2                    AdjustmentDate
-        ,N'ºŸÈ„ÀÈ∫√‘ '              AdjustmentReason
+        ,N'‡∏ú‡∏π‡πâ‡πÉ‡∏´‡πâ‡∏ö‡∏£‡∏¥ '              AdjustmentReason
         ,@TotalNetPaidAmount    AdjustmentAmount
         ,1                      IsActive
         ,@UserId                CreatedByUserId
@@ -346,7 +346,7 @@ BEGIN TRY
     FROM #Tmp
 
 	SET @IsResult	= 1;
-	SET @Msg		= N'∫—π∑÷°  ”‡√Á®';
+	SET @Msg		= N'‡∏ö‡∏±‡∏ô‡∏ó‡∏∂‡∏Å ‡∏™‡∏≥‡πÄ‡∏£‡πá‡∏à';
 
 	COMMIT TRANSACTION
 END TRY

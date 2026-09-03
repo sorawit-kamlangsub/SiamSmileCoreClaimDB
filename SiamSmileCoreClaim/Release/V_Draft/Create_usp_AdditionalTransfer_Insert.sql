@@ -1,18 +1,20 @@
-USE [CoreClaim]
+ÔªøUSE [CoreClaim]
 GO
 
+/****** Object:  StoredProcedure [finance].[usp_AdditionalTransfer_Insert]    Script Date: 9/3/2026 4:20:41 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author:		Sorawit kamlangsub
 -- Create date: 2026-09-02
 /* 
    Update date: 
 */
--- Description:	Process °“√‚Õπ‡æ‘Ë¡
+-- Description:	Process ‡∏Å‡∏≤‡∏£‡πÇ‡∏≠‡∏ô‡πÄ‡∏û‡∏¥‡πà‡∏°
 -- =============================================
 CREATE PROCEDURE [finance].[usp_AdditionalTransfer_Insert]  
 /* Add the parameters for the stored procedure here
@@ -56,7 +58,7 @@ BEGIN
 /*Setup OFF/ON Store Procedure*/
 	IF @IsResult = 0 
 	BEGIN
-		SET @Msg = N'ª‘¥„™Èß“π'
+		SET @Msg = N'‡∏õ‡∏¥‡∏î‡πÉ‡∏ä‡πâ‡∏á‡∏≤‡∏ô'
 		GOTO RESULT;
 	END;
 -----------------------------------
@@ -67,10 +69,7 @@ BEGIN
     DECLARE @CasePayable UNIQUEIDENTIFIER;
 
     DECLARE
-        @CaseAdjudicationId   UNIQUEIDENTIFIER
-         ,@PayableCategoryId    INT
-         ,@PayeeTypeId          INT 
-         ,@ToBankId             INT 
+         @ToBankId             INT 
          ,@ToBankName           VARCHAR(50)
          ,@ToBankAccountNo      VARCHAR(50)
          ,@CountValidate        INT ;
@@ -82,9 +81,10 @@ BEGIN
     FROM [process].CasePayable payable
     WHERE payable.CaseId = @CaseId;
 
-    SELECT 
+    SELECT DISTINCT
     payable.PayableCategoryId
     ,payable.PayeeTypeId
+    ,claim.ClaimId
     ,adju.*
     INTO #Tmp
     FROM core.[Case] [case]
@@ -96,10 +96,21 @@ BEGIN
         ON payable.CasePayableId = payItem.CasePayableId
     INNER JOIN finance.Payment pay
         ON payItem.PaymentId = pay.PaymentId
-    INNER JOIN process.CaseAdjudication adju
+    INNER JOIN 
+    (
+        SELECT 
+         adju.*
+         ,ROW_NUMBER() OVER (PARTITION BY adju.CaseId ORDER BY adju.VersionNo DESC) rwId
+        FROM process.CaseAdjudication adju
+    ) adju
         ON [case].CaseId = adju.CaseId
-    WHERE pay.PaymentStatusId = 3
-    AND adju.DecisionId = 2
+    WHERE claim.IsActive = 1
+    AND [case].IsActive = 1
+    AND payable.IsActive = 1
+    AND payItem.IsActive = 1
+    AND pay.IsActive = 1
+    AND pay.PaymentStatusId = 3
+    AND adju.rwId = 1
     AND [case].CaseId = @CaseId;
 
     SET @CaseAdjustmentId = NEWID();
@@ -107,16 +118,10 @@ BEGIN
     SELECT @CountValidate = COUNT(CaseId) FROM #Tmp
 
 /* Validate Data */
-	IF @CountValidate > 1 
+	IF @CountValidate IS NULL OR @CountValidate = 0
 	BEGIN
-		SET @Msg = N'¡’ CC ¡“°°«Ë“ 1 √“¬°“√'
-        SET @CasePayable = NULL
-		GOTO RESULT;
-	END;
-
-	IF @CountValidate IS NULL
-	BEGIN
-		SET @Msg = N'‰¡Ëæ∫¢ÈÕ¡Ÿ≈'
+		SET @IsResult = 0
+        SET @Msg = N'‡πÑ‡∏°‡πà‡∏û‡∏ö‡∏Ç‡πâ‡∏≠‡∏°‡∏π‡∏•'
         SET @CasePayable = NULL
 		GOTO RESULT;
 	END;
@@ -265,15 +270,16 @@ BEGIN TRY
         @CaseAdjustmentId       CaseAdjustmentId
         ,2                      AdjustmentTypeId
         ,@CaseId                CaseId
-        ,@CaseAdjudicationId    CaseAdjudicationId
+        ,CaseAdjudicationId    CaseAdjudicationId
         ,@D2                    AdjustmentDate
-        ,N'ºŸÈ„ÀÈ∫√‘ '              AdjustmentReason
+        ,N'‡∏ú‡∏π‡πâ‡πÉ‡∏´‡πâ‡∏ö‡∏£‡∏¥ '              AdjustmentReason
         ,@TotalNetPaidAmount    AdjustmentAmount
         ,1                      IsActive
         ,@UserId                CreatedByUserId
         ,@D2                    CreatedDate
         ,@UserId                UpdatedByUserId
         ,@D2                    UpdatedDate
+    FROM #Tmp
 
     INSERT INTO [process].[CasePayable]
                ([CasePayableId]
@@ -297,14 +303,14 @@ BEGIN TRY
     SELECT
      @CasePayable           [CasePayableId]
      ,@CaseId               CaseId
-     ,@CaseAdjudicationId   CaseAdjudicationId
+     ,CaseAdjudicationId   CaseAdjudicationId
      ,@CaseAdjustmentId     [CaseAdjustmentId]
-     ,@PayableCategoryId    PayableCategoryId
+     ,PayableCategoryId    PayableCategoryId
      ,2                     [PayableStatusId]
      ,@TotalNetPaidAmount   [PayableAmount]
      ,0                     [TotalPaidAmount]
      ,@TotalNetPaidAmount   [OutstandingAmount]
-     ,@PayeeTypeId          PayeeTypeId
+     ,PayeeTypeId          PayeeTypeId
      ,@ToBankId             ToBankId
      ,@ToBankName           ToBankName
      ,@ToBankAccountNo      ToBankAccountNo
@@ -313,9 +319,36 @@ BEGIN TRY
      ,@D2                   [CreatedDate]
      ,@UserId               [UpdatedByUserId]
      ,@D2                   [UpdatedDate]
+    FROM #Tmp
+
+    INSERT INTO [transaction].[TransactionLog]
+               ([TransactionLogId]
+               ,[ClaimId]
+               ,[CaseId]
+               ,[TransactionLogTypeId]
+               ,[ReferenceId]
+               ,[IsActive]
+               ,[Remark]
+               ,[CreatedByUserId]
+               ,[CreatedDate]
+               ,[UpdatedByUserId]
+               ,[UpdatedDate])
+    SELECT
+     NEWID()    [TransactionLogId]
+     ,ClaimId
+     ,@CaseId   [CaseId]
+     ,10        [TransactionLogTypeId]
+     ,NULL      [ReferenceId]
+     ,1         [IsActive]
+     ,NULL      [Remark]
+     ,@UserId   [CreatedByUserId]
+     ,@D2       [CreatedDate]
+     ,@UserId   [UpdatedByUserId]
+     ,@D2       [UpdatedDate]
+    FROM #Tmp
 
 	SET @IsResult	= 1;
-	SET @Msg		= N'∫—π∑÷°  ”‡√Á®';
+	SET @Msg		= N'‡∏ö‡∏±‡∏ô‡∏ó‡∏∂‡∏Å ‡∏™‡∏≥‡πÄ‡∏£‡πá‡∏à';
 
 	COMMIT TRANSACTION
 END TRY
@@ -344,7 +377,9 @@ comment this part if no return result */
     SELECT @IsResult IsResult
 		    ,@Result Result
 		    ,@Msg	 Msg
-            ,@CasePayable CasePayable;
+            ,@CasePayable CasePayableId;
 
 END
 GO
+
+
