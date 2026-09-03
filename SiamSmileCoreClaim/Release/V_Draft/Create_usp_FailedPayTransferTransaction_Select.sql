@@ -1,10 +1,13 @@
 ﻿USE [CoreClaim]
 GO
-/****** Object:  StoredProcedure [finance].[usp_FailedPayTransferTransaction_Select]    Script Date: 8/31/2026 1:41:04 PM ******/
+
+/****** Object:  StoredProcedure [finance].[usp_FailedPayTransferTransaction_Select]    Script Date: 9/3/2026 4:08:15 PM ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author:		Sorawit kamlangsub
 -- Create date: 2026-08-27 
@@ -84,3 +87,6 @@ comment below part if not return paging or sorting*/
 
 	OFFSET @IndexStart ROWS FETCH NEXT @PageSize ROWS ONLY
 END
+GO
+
+

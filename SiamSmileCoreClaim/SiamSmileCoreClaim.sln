@@ -9,8 +9,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release", "Release", "{02EA
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "V_Draft", "V_Draft", "{61DA6B9E-91E8-4882-9C88-25D0193D9715}"
 	ProjectSection(SolutionItems) = preProject
-		Release\V_Draft\1_Create_usp_FailedPayTransferTransaction_Select.sql = Release\V_Draft\1_Create_usp_FailedPayTransferTransaction_Select.sql
-		Release\V_Draft\1_Create_usp_InquiryMonitor_Select.sql = Release\V_Draft\1_Create_usp_InquiryMonitor_Select.sql
+		Release\V_Draft\Create_usp_AdditionalTransferMonitor_Select.sql = Release\V_Draft\Create_usp_AdditionalTransferMonitor_Select.sql
+		Release\V_Draft\Create_usp_AdditionalTransfer_Insert.sql = Release\V_Draft\Create_usp_AdditionalTransfer_Insert.sql
+		Release\V_Draft\Create_usp_FailedPayTransferTransaction_Select.sql = Release\V_Draft\Create_usp_FailedPayTransferTransaction_Select.sql
+		Release\V_Draft\Create_usp_InquiryMonitor_Select.sql = Release\V_Draft\Create_usp_InquiryMonitor_Select.sql
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Finance", "Finance", "{A389E4F8-A6AD-4D79-BD86-B0CD429F9AD9}"

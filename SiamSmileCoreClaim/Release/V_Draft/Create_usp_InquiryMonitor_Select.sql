@@ -1,10 +1,13 @@
 ﻿USE [CoreClaim]
 GO
-/****** Object:  StoredProcedure [finance].[usp_InquiryMonitor_Select]    Script Date: 8/31/2026 1:40:21 PM ******/
+
+/****** Object:  StoredProcedure [finance].[usp_InquiryMonitor_Select]    Script Date: 9/3/2026 4:08:40 PM ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author:		Sorawit kamlangsub
 -- Create date: 2026-08-21
@@ -72,3 +75,6 @@ BEGIN
     ORDER BY p.CreatedDate DESC
     OFFSET @IndexStart ROWS FETCH NEXT @PageSize ROWS ONLY
 END
+GO
+
+
