@@ -1,6 +1,6 @@
-USE [CoreClaim]
+﻿USE [CoreClaim]
 GO
-/****** Object:  StoredProcedure [finance].[usp_FailedPayTransferTransaction_Select]    Script Date: 8/31/2026 1:39:59 PM ******/
+/****** Object:  StoredProcedure [finance].[usp_FailedPayTransferTransaction_Select]    Script Date: 9/3/2026 4:23:44 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8,7 +8,7 @@ GO
 -- =============================================
 -- Author:		Sorawit kamlangsub
 -- Create date: 2026-08-27 
--- Description:	Moniter ��䢡���͹�Թ
+-- Description:	Moniter แก้ไขการโอนเงิน
 -- =============================================
 ALTER PROCEDURE [finance].[usp_FailedPayTransferTransaction_Select] 
 --Add the parameters for the stored procedure here
