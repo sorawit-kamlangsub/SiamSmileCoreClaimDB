@@ -1,11 +1,13 @@
-﻿USE [CoreClaim]
+USE [CoreClaim]
 GO
 
+/****** Object:  StoredProcedure [finance].[usp_AdditionalTransferMonitor_Select]    Script Date: 9/4/2026 3:53:11 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author:		Sorawit kamlangsub
 -- Create date: 2026-09-03
@@ -48,6 +50,7 @@ BEGIN
 	 ,rs.TotalNetPaidAmount
 	 ,pm.TotalNetPaidAmount		AddPayAmount
 	 ,COUNT(cc.CaseId) OVER()   TotalCount
+	 ,pm.PaymentStatusId
 	FROM finance.Payment pm
 	INNER JOIN finance.PaymentItem pmi
 		ON pm.PaymentId = pmi.PaymentId
@@ -107,3 +110,4 @@ OFFSET @IndexStart ROWS FETCH NEXT @PageSize ROWS ONLY
 
 END
 GO
+
