@@ -3,7 +3,6 @@ GO
 
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
@@ -171,7 +170,6 @@ BEGIN TRY
          ,t.[ApprovedAdmissionTime]
          ,t.[ApprovedDischargeDate]
          ,t.[ApprovedDischargeTime]
-
          ,t.[CoveredAmount]
          ,t.[NonCoveredAmount]
          ,t.[CompensateAmount]
@@ -183,7 +181,6 @@ BEGIN TRY
          ,t.[DeductibleAmount]
          ,t.[CoPayAmount]
          ,t.[CoInsuranceAmount]
-
          ,t.[RejectReasonId]
          ,t.[RejectDate]
          ,t.[IsLatest]
@@ -328,4 +325,3 @@ comment this part if no return result */
             ,@CasePayable CasePayableId;
 
 END
-GO
