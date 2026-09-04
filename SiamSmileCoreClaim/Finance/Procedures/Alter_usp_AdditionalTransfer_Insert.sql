@@ -172,67 +172,17 @@ BEGIN TRY
          ,t.[ApprovedDischargeDate]
          ,t.[ApprovedDischargeTime]
 
-         ,CASE 
-              WHEN t.[CoveredAmount] > 0 
-                  THEN t.[CoveredAmount] + @TotalNetPaidAmount
-              ELSE t.[CoveredAmount]
-          END                                                [CoveredAmount]
-
-         ,CASE 
-              WHEN t.[NonCoveredAmount] > 0 
-                  THEN t.[NonCoveredAmount] + @TotalNetPaidAmount
-              ELSE t.[NonCoveredAmount]
-          END                                                [NonCoveredAmount]
-
-         ,CASE 
-              WHEN t.[CompensateAmount] > 0 
-                  THEN t.[CompensateAmount] + @TotalNetPaidAmount
-              ELSE t.[CompensateAmount]
-          END                                                [CompensateAmount]
-
-         ,CASE 
-              WHEN t.[ApprovedMedicalAmount] > 0 
-                  THEN t.[ApprovedMedicalAmount] + @TotalNetPaidAmount
-              ELSE t.[ApprovedMedicalAmount]
-          END                                                [ApprovedMedicalAmount]
-
-         ,CASE 
-              WHEN t.[ApprovedCompensateAmount] > 0 
-                  THEN t.[ApprovedCompensateAmount] + @TotalNetPaidAmount
-              ELSE t.[ApprovedCompensateAmount]
-          END                                                [ApprovedCompensateAmount]
-
-         ,CASE 
-              WHEN t.[PatientPayAmount] > 0 
-                  THEN t.[PatientPayAmount] + @TotalNetPaidAmount
-              ELSE t.[PatientPayAmount]
-          END                                                [PatientPayAmount]
-
+         ,t.[CoveredAmount]
+         ,t.[NonCoveredAmount]
+         ,t.[CompensateAmount]
+         ,t.[ApprovedMedicalAmount]
+         ,t.[ApprovedCompensateAmount]
+         ,t.[PatientPayAmount]
          ,t.[IsExgratia]
-
-         ,CASE 
-              WHEN t.[ExgratiaAmount] > 0 
-                  THEN t.[ExgratiaAmount] + @TotalNetPaidAmount
-              ELSE t.[ExgratiaAmount]
-          END                                                [ExgratiaAmount]
-
-         ,CASE 
-              WHEN t.[DeductibleAmount] > 0 
-                  THEN t.[DeductibleAmount] + @TotalNetPaidAmount
-              ELSE t.[DeductibleAmount]
-          END                                                [DeductibleAmount]
-
-         ,CASE 
-              WHEN t.[CoPayAmount] > 0 
-                  THEN t.[CoPayAmount] + @TotalNetPaidAmount
-              ELSE t.[CoPayAmount]
-          END                                                [CoPayAmount]
-
-         ,CASE 
-              WHEN t.[CoInsuranceAmount] > 0 
-                  THEN t.[CoInsuranceAmount] + @TotalNetPaidAmount
-              ELSE t.[CoInsuranceAmount]
-          END                                                [CoInsuranceAmount]
+         ,t.[ExgratiaAmount]
+         ,t.[DeductibleAmount]
+         ,t.[CoPayAmount]
+         ,t.[CoInsuranceAmount]
 
          ,t.[RejectReasonId]
          ,t.[RejectDate]
