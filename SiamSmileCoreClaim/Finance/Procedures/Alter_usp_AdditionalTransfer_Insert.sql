@@ -126,6 +126,13 @@ BEGIN
 BEGIN TRY
 	BEGIN TRANSACTION
 
+    UPDATE [process].[CaseAdjudication]
+        SET UpdatedByUserId = @UserId
+            ,UpdatedDate = @D2
+            ,IsLatest = 0
+    FROM [process].[CaseAdjudication]
+    WHERE CaseId = @CaseId      
+    
     INSERT INTO [process].[CaseAdjudication]
                ([CaseAdjudicationId]
                ,[CaseId]
@@ -172,9 +179,9 @@ BEGIN TRY
          ,t.[ApprovedDischargeTime]
          ,t.[CoveredAmount]
          ,t.[NonCoveredAmount]
-         ,t.[CompensateAmount]
-         ,t.[ApprovedMedicalAmount]
-         ,t.[ApprovedCompensateAmount]
+         ,0                                                 [CompensateAmount]
+         ,0                                                 [ApprovedMedicalAmount]
+         ,0                                                 [ApprovedCompensateAmount]
          ,t.[PatientPayAmount]
          ,t.[IsExgratia]
          ,t.[ExgratiaAmount]
@@ -183,7 +190,7 @@ BEGIN TRY
          ,t.[CoInsuranceAmount]
          ,t.[RejectReasonId]
          ,t.[RejectDate]
-         ,t.[IsLatest]
+         ,1                                                 [IsLatest]
          ,t.[ApprovedIPDDayCount]
          ,t.[ApprovedICUDayCount]
          ,t.[DecisionResonId]
@@ -203,27 +210,29 @@ BEGIN TRY
         [CaseId],
         [CaseAdjudicationId],
         [AdjustmentDate],
-        [AdjustmentReason],
+        [AdjustmentReasonId],
         [AdjustmentAmount],
         [IsActive],
         [CreatedByUserId],
         [CreatedDate],
         [UpdatedByUserId],
-        [UpdatedDate]
+        [UpdatedDate],
+        [Remark]
     )
     SELECT
         @CaseAdjustmentId       CaseAdjustmentId
         ,2                      AdjustmentTypeId
         ,@CaseId                CaseId
-        ,CaseAdjudicationId    CaseAdjudicationId
+        ,CaseAdjudicationId     CaseAdjudicationId
         ,@D2                    AdjustmentDate
-        ,N'ผู้ให้บริ '              AdjustmentReason
+        ,@AdjustmentReasonId    AdjustmentReasonId
         ,@TotalNetPaidAmount    AdjustmentAmount
         ,1                      IsActive
         ,@UserId                CreatedByUserId
         ,@D2                    CreatedDate
         ,@UserId                UpdatedByUserId
         ,@D2                    UpdatedDate
+        ,@Remark                Remark
     FROM #Tmp
 
     INSERT INTO [process].[CasePayable]
