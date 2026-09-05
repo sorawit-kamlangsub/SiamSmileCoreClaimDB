@@ -1,0 +1,336 @@
+USE [CoreClaim]
+GO
+/****** Object:  StoredProcedure [finance].[usp_AdditionalTransfer_Insert]    Script Date: 9/5/2026 11:23:59 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Sorawit kamlangsub
+-- Create date: 2026-09-02
+/* 
+   Update date: 
+*/
+-- Description:	Process การโอนเพิ่ม
+-- =============================================
+CREATE PROCEDURE [finance].[usp_AdditionalTransfer_Core_Insert]  
+/* Add the parameters for the stored procedure here
+ comment if not receive parameter*/
+			@AdjustmentReasonId INT
+            ,@TotalNetPaidAmount DECIMAL(16,2)
+            ,@CaseId UNIQUEIDENTIFIER
+            ,@UserId INT
+            ,@Remark NVARCHAR(500)
+
+AS
+BEGIN
+/*SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.*/
+	SET NOCOUNT ON;
+
+/*Test Zone
+    DECLARE @AdjustmentReasonId INT
+            ,@TotalNetPaidAmount DECIMAL(16,2)
+            ,@CaseId UNIQUEIDENTIFIER
+            ,@UserId INT
+            ,@Remark NVARCHAR(500);
+            ;
+    SET @UserId = 1;
+    SET @AdjustmentReasonId = 2;
+    SET @TotalNetPaidAmount = 203;
+    SET @CaseId = 'D0987F5A-C10D-4590-9C37-7348F13CB4DE';
+*/
+
+	DECLARE @D2		DATETIME2(7);
+
+/*Default Declare*/
+	DECLARE @IsResult	BIT			 ;
+	DECLARE @Result		VARCHAR(100) ;
+	DECLARE @Msg		NVARCHAR(500);
+
+    SET @Msg = '';
+    SET @Result = '';
+    SET @IsResult = 1;
+    SET @D2 = GETDATE();
+
+/*Setup OFF/ON Store Procedure*/
+	IF @IsResult = 0 
+	BEGIN
+		SET @Msg = N'ปิดใช้งาน'
+		GOTO RESULT;
+	END;
+-----------------------------------
+
+/* TODO Select Query Here*/
+/* Setup Data*/
+    DECLARE @CaseAdjustmentId UNIQUEIDENTIFIER;
+    DECLARE @CasePayable UNIQUEIDENTIFIER;
+
+    DECLARE
+         @ToBankId             INT 
+         ,@ToBankName           VARCHAR(50)
+         ,@ToBankAccountNo      VARCHAR(50)
+         ,@CountValidate        INT ;
+
+    SELECT 
+    @ToBankId            = payable.ToBankId
+    ,@ToBankName         = payable.ToBankName
+    ,@ToBankAccountNo    = payable.ToBankAccountNo
+    FROM [process].CasePayable payable
+    WHERE payable.CaseId = @CaseId;
+
+    SELECT DISTINCT
+    payable.PayableCategoryId
+    ,payable.PayeeTypeId
+    ,claim.ClaimId
+    ,adju.*
+    INTO #Tmp
+    FROM core.[Case] [case]
+    INNER JOIN core.Claim claim
+        ON [case].ClaimId = claim.ClaimId
+    INNER JOIN [process].CasePayable payable
+        ON [case].CaseId = payable.CaseId
+    INNER JOIN finance.PaymentItem payItem
+        ON payable.CasePayableId = payItem.CasePayableId
+    INNER JOIN finance.Payment pay
+        ON payItem.PaymentId = pay.PaymentId
+    INNER JOIN 
+    (
+        SELECT 
+         adju.*
+         ,ROW_NUMBER() OVER (PARTITION BY adju.CaseId ORDER BY adju.VersionNo DESC) rwId
+        FROM process.CaseAdjudication adju
+    ) adju
+        ON [case].CaseId = adju.CaseId
+    WHERE claim.IsActive = 1
+    AND [case].IsActive = 1
+    AND payable.IsActive = 1
+    AND payItem.IsActive = 1
+    AND pay.IsActive = 1
+    AND pay.PaymentStatusId = 3
+    AND adju.rwId = 1
+    AND [case].CaseId = @CaseId;
+
+    SET @CaseAdjustmentId = NEWID();
+    SET @CasePayable = NEWID();
+    SELECT @CountValidate = COUNT(CaseId) FROM #Tmp
+
+/* Validate Data */
+	IF @CountValidate IS NULL OR @CountValidate = 0
+	BEGIN
+		SET @IsResult = 0
+        SET @Msg = N'ไม่พบข้อมูล'
+        SET @CasePayable = NULL
+		GOTO RESULT;
+	END;
+
+BEGIN TRY
+	BEGIN TRANSACTION
+
+    UPDATE [process].[CaseAdjudication]
+        SET UpdatedByUserId = @UserId
+            ,UpdatedDate = @D2
+            ,IsLatest = 0
+    FROM [process].[CaseAdjudication]
+    WHERE CaseId = @CaseId      
+    
+    INSERT INTO [process].[CaseAdjudication]
+               ([CaseAdjudicationId]
+               ,[CaseId]
+               ,[VersionNo]
+               ,[DecisionId]
+               ,[DecisionDate]
+               ,[ApprovedAdmissionDate]
+               ,[ApprovedAdmissionTime]
+               ,[ApprovedDischargeDate]
+               ,[ApprovedDischargeTime]
+               ,[CoveredAmount]
+               ,[NonCoveredAmount]
+               ,[CompensateAmount]
+               ,[ApprovedMedicalAmount]
+               ,[ApprovedCompensateAmount]
+               ,[PatientPayAmount]
+               ,[IsExgratia]
+               ,[ExgratiaAmount]
+               ,[DeductibleAmount]
+               ,[CoPayAmount]
+               ,[CoInsuranceAmount]
+               ,[RejectReasonId]
+               ,[RejectDate]
+               ,[IsLatest]
+               ,[ApprovedIPDDayCount]
+               ,[ApprovedICUDayCount]
+               ,[DecisionResonId]
+               ,[DecisionRemark]
+               ,[Remark]
+               ,[IsActive]
+               ,[CreatedByUserId]
+               ,[CreatedDate]
+               ,[UpdatedByUserId]
+               ,[UpdatedDate])  
+    SELECT 
+          NEWID()                                           [CaseAdjudicationId]
+         ,@CaseId                                           [CaseId]
+         ,t.[VersionNo] + 1                                 [VersionNo]
+         ,t.[DecisionId]
+         ,t.[DecisionDate]
+         ,t.[ApprovedAdmissionDate]
+         ,t.[ApprovedAdmissionTime]
+         ,t.[ApprovedDischargeDate]
+         ,t.[ApprovedDischargeTime]
+         ,t.[CoveredAmount]
+         ,t.[NonCoveredAmount]
+         ,0                                                 [CompensateAmount]
+         ,0                                                 [ApprovedMedicalAmount]
+         ,0                                                 [ApprovedCompensateAmount]
+         ,t.[PatientPayAmount]
+         ,t.[IsExgratia]
+         ,t.[ExgratiaAmount]
+         ,t.[DeductibleAmount]
+         ,t.[CoPayAmount]
+         ,t.[CoInsuranceAmount]
+         ,t.[RejectReasonId]
+         ,t.[RejectDate]
+         ,1                                                 [IsLatest]
+         ,t.[ApprovedIPDDayCount]
+         ,t.[ApprovedICUDayCount]
+         ,t.[DecisionResonId]
+         ,t.[DecisionRemark]
+         ,t.[Remark]
+         ,1                                                 [IsActive]
+         ,@UserId                                           [CreatedByUserId]
+         ,@D2                                               [CreatedDate]
+         ,@UserId                                           [UpdatedByUserId]
+         ,@D2                                               [UpdatedDate]
+    FROM #Tmp t;
+    
+    INSERT INTO [process].[CaseAdjustment]
+    (
+        [CaseAdjustmentId],
+        [AdjustmentTypeId],
+        [CaseId],
+        [CaseAdjudicationId],
+        [AdjustmentDate],
+        [AdjustmentReasonId],
+        [AdjustmentAmount],
+        [IsActive],
+        [CreatedByUserId],
+        [CreatedDate],
+        [UpdatedByUserId],
+        [UpdatedDate],
+        [Remark]
+    )
+    SELECT
+        @CaseAdjustmentId       CaseAdjustmentId
+        ,2                      AdjustmentTypeId
+        ,@CaseId                CaseId
+        ,CaseAdjudicationId     CaseAdjudicationId
+        ,@D2                    AdjustmentDate
+        ,@AdjustmentReasonId    AdjustmentReasonId
+        ,@TotalNetPaidAmount    AdjustmentAmount
+        ,1                      IsActive
+        ,@UserId                CreatedByUserId
+        ,@D2                    CreatedDate
+        ,@UserId                UpdatedByUserId
+        ,@D2                    UpdatedDate
+        ,@Remark                Remark
+    FROM #Tmp
+
+    INSERT INTO [process].[CasePayable]
+               ([CasePayableId]
+               ,[CaseId]
+               ,[CaseAdjudicationId]
+               ,[CaseAdjustmentId]
+               ,[PayableCategoryId]
+               ,[PayableStatusId]
+               ,[PayableAmount]
+               ,[TotalPaidAmount]
+               ,[OutstandingAmount]
+               ,[PayeeTypeId]
+               ,[ToBankId]
+               ,[ToBankName]
+               ,[ToBankAccountNo]
+               ,[IsActive]
+               ,[CreatedByUserId]
+               ,[CreatedDate]
+               ,[UpdatedByUserId]
+               ,[UpdatedDate])
+    SELECT
+     @CasePayable           [CasePayableId]
+     ,@CaseId               CaseId
+     ,CaseAdjudicationId   CaseAdjudicationId
+     ,@CaseAdjustmentId     [CaseAdjustmentId]
+     ,PayableCategoryId    PayableCategoryId
+     ,2                     [PayableStatusId]
+     ,@TotalNetPaidAmount   [PayableAmount]
+     ,0                     [TotalPaidAmount]
+     ,@TotalNetPaidAmount   [OutstandingAmount]
+     ,PayeeTypeId          PayeeTypeId
+     ,@ToBankId             ToBankId
+     ,@ToBankName           ToBankName
+     ,@ToBankAccountNo      ToBankAccountNo
+     ,1                     [IsActive]
+     ,@UserId               [CreatedByUserId]
+     ,@D2                   [CreatedDate]
+     ,@UserId               [UpdatedByUserId]
+     ,@D2                   [UpdatedDate]
+    FROM #Tmp
+
+    INSERT INTO [transaction].[TransactionLog]
+               ([TransactionLogId]
+               ,[ClaimId]
+               ,[CaseId]
+               ,[TransactionLogTypeId]
+               ,[ReferenceId]
+               ,[IsActive]
+               ,[Remark]
+               ,[CreatedByUserId]
+               ,[CreatedDate]
+               ,[UpdatedByUserId]
+               ,[UpdatedDate])
+    SELECT
+     NEWID()    [TransactionLogId]
+     ,ClaimId
+     ,@CaseId   [CaseId]
+     ,10        [TransactionLogTypeId]
+     ,NULL      [ReferenceId]
+     ,1         [IsActive]
+     ,NULL      [Remark]
+     ,@UserId   [CreatedByUserId]
+     ,@D2       [CreatedDate]
+     ,@UserId   [UpdatedByUserId]
+     ,@D2       [UpdatedDate]
+    FROM #Tmp
+
+	SET @IsResult	= 1;
+	SET @Msg		= N'บันทึก สำเร็จ';
+
+	COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+
+	SET @IsResult	= 0;
+	SET @Msg		= ERROR_MESSAGE();
+
+	IF @@TRANCOUNT > 0 ROLLBACK;
+END CATCH
+
+-----------------------------------
+
+RESULT:
+
+/*Drop TempTable
+Comment below if not use TempTable*/
+	IF OBJECT_ID('tempdb..#Tmp') IS NOT NULL  DROP TABLE #Tmp;
+
+
+/*Return Result 
+comment this part if no return result */
+	IF @IsResult = 1 BEGIN	SET @Result = 'Success' END	
+	ELSE BEGIN				SET @Result = 'Failure' END;	
+
+    SELECT @IsResult IsResult
+		    ,@Result Result
+		    ,@Msg	 Msg
+            ,@CasePayable CasePayableId;
+
+END
