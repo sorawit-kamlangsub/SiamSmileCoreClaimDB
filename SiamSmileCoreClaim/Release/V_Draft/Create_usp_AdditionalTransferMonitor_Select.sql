@@ -1,7 +1,7 @@
 USE [CoreClaim]
 GO
 
-/****** Object:  StoredProcedure [finance].[usp_AdditionalTransferMonitor_Select]    Script Date: 9/4/2026 3:53:11 PM ******/
+/****** Object:  StoredProcedure [finance].[usp_AdditionalTransferMonitor_Select]    Script Date: 9/5/2026 9:50:30 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -51,6 +51,7 @@ BEGIN
 	 ,pm.TotalNetPaidAmount		AddPayAmount
 	 ,COUNT(cc.CaseId) OVER()   TotalCount
 	 ,pm.PaymentStatusId
+	 ,cpa.CasePayableId
 	FROM finance.Payment pm
 	INNER JOIN finance.PaymentItem pmi
 		ON pm.PaymentId = pmi.PaymentId
