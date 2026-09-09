@@ -49,6 +49,7 @@ BEGIN
 	 ,COUNT(cc.CaseId) OVER()   TotalCount
 	 ,pm.PaymentStatusId
 	 ,cpa.CasePayableId
+	 ,pm.PaymentId
 	FROM finance.Payment pm
 	INNER JOIN finance.PaymentItem pmi
 		ON pm.PaymentId = pmi.PaymentId
