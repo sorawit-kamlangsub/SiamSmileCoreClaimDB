@@ -10,7 +10,7 @@
 ## Database หลัก
 
 ```
-Server=<server>;Database=<db>;User Id=<user>;Password=%DB_PASSWORD%;TrustServerCertificate=True;
+Server= "Data Source=147.50.148.33;Initial Catalog=CoreClaim;Persist Security Info=True;User ID=devdba;Password=-v300wfhxt;Multiple Active Result Sets=True;Encrypt=True;Trust Server Certificate=True;Column Encryption Setting=Enabled";
 ```
 
 | หัวข้อ | รายละเอียด |
