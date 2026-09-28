@@ -38,13 +38,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AdditionalTransfer", "Addit
 		Finance\AdditionalTransfer\InsertCaseAdjustment.sql = Finance\AdditionalTransfer\InsertCaseAdjustment.sql
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Opencode-query", "Opencode-query", "{75C9F54D-1C75-4085-8888-65CB46A824C5}"
+	ProjectSection(SolutionItems) = preProject
+		Opencode-query\SelectBillingMonitor.sql = Opencode-query\SelectBillingMonitor.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Default|Default = Default|Default
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E2F11C40-31B2-F6BF-EDF1-F8536154594A}.Default|Default.ActiveCfg = Default
-		{B096FD2C-6CF6-4905-ADC9-3A6B197B7251}.Default|Default.ActiveCfg = Default
+		{DDC2ABF1-65E9-452C-BD7C-6051A09F8F53}.Default|Default.ActiveCfg = Default
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
