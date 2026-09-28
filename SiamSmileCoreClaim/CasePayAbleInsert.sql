@@ -48,7 +48,7 @@ DECLARE @CasePayableId UNIQUEIDENTIFIER = NEWID();
         AND OrganizeTypeId = 5
     ) org
         ON bfc.BankId = org.OrganizeId
-    WHERE bfc.CaseId = @CaseId;
+    WHERE bfc.CaseId = '39B0A09E-00CB-42E9-9499-763A6755AE4C';
 
 INSERT INTO @MappingPayeeType (PayeeTypeId, ClaimSourceId)
 VALUES
@@ -88,25 +88,25 @@ AND adju.CaseAdjudicationId = '8492D497-D563-4628-90F3-3EEE6E951FD3'
 
 SELECT * FROM #Tmp
     
-    --INSERT INTO [process].[CasePayable]
-    --           ([CasePayableId]
-    --           ,[CaseId]
-    --           ,[CaseAdjudicationId]
-    --           ,[CaseAdjustmentId]
-    --           ,[PayableCategoryId]
-    --           ,[PayableStatusId]
-    --           ,[PayableAmount]
-    --           ,[TotalPaidAmount]
-    --           ,[OutstandingAmount]
-    --           ,[PayeeTypeId]
-    --           ,[ToBankId]
-    --           ,[ToBankName]
-    --           ,[ToBankAccountNo]
-    --           ,[IsActive]
-    --           ,[CreatedByUserId]
-    --           ,[CreatedDate]
-    --           ,[UpdatedByUserId]
-    --           ,[UpdatedDate])
+    INSERT INTO [process].[CasePayable]
+               ([CasePayableId]
+               ,[CaseId]
+               ,[CaseAdjudicationId]
+               ,[CaseAdjustmentId]
+               ,[PayableCategoryId]
+               ,[PayableStatusId]
+               ,[PayableAmount]
+               ,[TotalPaidAmount]
+               ,[OutstandingAmount]
+               ,[PayeeTypeId]
+               ,[ToBankId]
+               ,[ToBankName]
+               ,[ToBankAccountNo]
+               ,[IsActive]
+               ,[CreatedByUserId]
+               ,[CreatedDate]
+               ,[UpdatedByUserId]
+               ,[UpdatedDate])
     SELECT
      @CasePayableId        [CasePayableId]
      ,CaseId               CaseId

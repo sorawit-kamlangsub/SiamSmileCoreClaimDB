@@ -34,8 +34,8 @@ BEGIN
         ,@ToBankId          INT             
         ,@ToBankName        VARCHAR(50)     
         ,@ToBankAccountName VARCHAR(200)    
-        ,@ToBankAccountNo   VARCHAR(50)     
-        ,@PhoneNumber       VARCHAR(20)
+        ,@ToBankAccountNo   VARCHAR(50)  
+        ,@PhoneNumber       VARCHAR(50)
         ,@CasePayableId     UNIQUEIDENTIFIER;
 
     SET @Msg = '';
@@ -57,6 +57,8 @@ BEGIN
     IF @IsResult = 1
     BEGIN
         
+    -- Set Data
+
     INSERT INTO @MappingPayeeType (PayeeTypeId, ClaimSourceId)
     VALUES
         (1, 1), -- N/A -> n/a
@@ -71,6 +73,25 @@ BEGIN
         (4, NULL), -- ExGratia -> 
         (5, 4), -- DisabilityBenefit -> Disability
         (6, 5); -- DeathBenefit -> DeathCase        
+
+        SELECT 
+        @ToBankId            = bfc.BankId
+        ,@ToBankName         = org.OrganizeName
+        ,@ToBankAccountNo    = bfc.BankAccountNo
+        ,@ToBankAccountName  = bfc.BankAccountName
+        ,@PhoneNumber        = bfc.PhoneNo
+        FROM agent.Beneficiary bfc
+        LEFT JOIN 
+        (
+            SELECT
+             OrganizeId
+             ,OrganizeName
+            FROM ext.Organize 
+            WHERE IsActive = 1
+            AND OrganizeTypeId = 5
+        ) org
+            ON bfc.BankId = org.OrganizeId
+        WHERE bfc.CaseId = @CaseId;
         
         SELECT
          cc.CaseId
