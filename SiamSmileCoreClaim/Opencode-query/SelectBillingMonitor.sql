@@ -25,7 +25,8 @@ SELECT
     -- ชื่อผู้เอาประกัน (Insured Person Name)
     ,cl.CustomerName
     
-    -- สถานพยาบาล (Hospital Name)
+    -- สถานพยาบาล (Hospital Id, Hospital Name)
+    ,org.OrganizeId
     ,org.OrganizeName
     
     -- จำนวนเงิน (Amount)
@@ -42,11 +43,11 @@ INNER JOIN core.[Case] cc
     ON cpa.CaseId = cc.CaseId
 INNER JOIN core.Claim cl
     ON cc.ClaimId = cl.ClaimId
-LEFT JOIN ext.Organize org
-    ON cpa.ToBankId = org.OrganizeId
-    AND org.OrganizeTypeId = 5  -- 5 = Hospital
+INNER JOIN ext.Organize org
+    ON cc.HospitalId = org.OrganizeId
 WHERE cpa.IsActive = 1
     AND cc.IsActive = 1
     AND cl.IsActive = 1
     AND cpa.PayableStatusId = 2  -- รอสร้างรายการ
+    AND org.OrganizeTypeId = 8  -- 8 = Hospital
 ORDER BY cl.CreatedDate DESC
