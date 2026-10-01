@@ -40,7 +40,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AdditionalTransfer", "Addit
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Opencode-query", "Opencode-query", "{75C9F54D-1C75-4085-8888-65CB46A824C5}"
 	ProjectSection(SolutionItems) = preProject
+		Opencode-query\SelectBillingApproveReview.sql = Opencode-query\SelectBillingApproveReview.sql
 		Opencode-query\SelectBillingMonitor.sql = Opencode-query\SelectBillingMonitor.sql
+		Opencode-query\SelectPaymentHcg.sql = Opencode-query\SelectPaymentHcg.sql
 	EndProjectSection
 EndProject
 Global
@@ -49,7 +51,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E2F11C40-31B2-F6BF-EDF1-F8536154594A}.Default|Default.ActiveCfg = Default
-		{7C10FC6F-D944-47EA-A13A-1F05F5FD087D}.Default|Default.ActiveCfg = Default
+		{8E264778-FA4B-495D-83ED-8BAC3F14258E}.Default|Default.ActiveCfg = Default
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
