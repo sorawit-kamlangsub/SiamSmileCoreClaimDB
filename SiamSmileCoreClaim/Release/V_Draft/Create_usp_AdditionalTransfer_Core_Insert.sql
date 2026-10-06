@@ -1,17 +1,20 @@
 USE [CoreClaim]
 GO
-/****** Object:  StoredProcedure [finance].[usp_AdditionalTransfer_Insert]    Script Date: 9/5/2026 11:23:59 AM ******/
+
+/****** Object:  StoredProcedure [finance].[usp_AdditionalTransfer_Core_Insert]    Script Date: 10/6/2026 10:14:28 AM ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author:		Sorawit kamlangsub
 -- Create date: 2026-09-02
 /* 
    Update date: 
 */
--- Description:	Process °“√‚Õπ‡æ‘Ë¡
+-- Description:	Process ‡∏Å‡∏≤‡∏£‡πÇ‡∏≠‡∏ô‡πÄ‡∏û‡∏¥‡πà‡∏°
 -- =============================================
 CREATE PROCEDURE [finance].[usp_AdditionalTransfer_Core_Insert]  
 /* Add the parameters for the stored procedure here
@@ -55,7 +58,7 @@ BEGIN
 /*Setup OFF/ON Store Procedure*/
 	IF @IsResult = 0 
 	BEGIN
-		SET @Msg = N'ª‘¥„™Èß“π'
+		SET @Msg = N'‡∏õ‡∏¥‡∏î‡πÉ‡∏ä‡πâ‡∏á‡∏≤‡∏ô'
 		GOTO RESULT;
 	END;
 -----------------------------------
@@ -118,7 +121,7 @@ BEGIN
 	IF @CountValidate IS NULL OR @CountValidate = 0
 	BEGIN
 		SET @IsResult = 0
-        SET @Msg = N'‰¡Ëæ∫¢ÈÕ¡Ÿ≈'
+        SET @Msg = N'‡πÑ‡∏°‡πà‡∏û‡∏ö‡∏Ç‡πâ‡∏≠‡∏°‡∏π‡∏•'
         SET @CasePayable = NULL
 		GOTO RESULT;
 	END;
@@ -126,82 +129,82 @@ BEGIN
 BEGIN TRY
 	BEGIN TRANSACTION
 
-    UPDATE [process].[CaseAdjudication]
-        SET UpdatedByUserId = @UserId
-            ,UpdatedDate = @D2
-            ,IsLatest = 0
-    FROM [process].[CaseAdjudication]
-    WHERE CaseId = @CaseId      
+    --UPDATE [process].[CaseAdjudication]
+    --    SET UpdatedByUserId = @UserId
+    --        ,UpdatedDate = @D2
+    --        ,IsLatest = 0
+    --FROM [process].[CaseAdjudication]
+    --WHERE CaseId = @CaseId      
     
-    INSERT INTO [process].[CaseAdjudication]
-               ([CaseAdjudicationId]
-               ,[CaseId]
-               ,[VersionNo]
-               ,[DecisionId]
-               ,[DecisionDate]
-               ,[ApprovedAdmissionDate]
-               ,[ApprovedAdmissionTime]
-               ,[ApprovedDischargeDate]
-               ,[ApprovedDischargeTime]
-               ,[CoveredAmount]
-               ,[NonCoveredAmount]
-               ,[CompensateAmount]
-               ,[ApprovedMedicalAmount]
-               ,[ApprovedCompensateAmount]
-               ,[PatientPayAmount]
-               ,[IsExgratia]
-               ,[ExgratiaAmount]
-               ,[DeductibleAmount]
-               ,[CoPayAmount]
-               ,[CoInsuranceAmount]
-               ,[RejectReasonId]
-               ,[RejectDate]
-               ,[IsLatest]
-               ,[ApprovedIPDDayCount]
-               ,[ApprovedICUDayCount]
-               ,[DecisionResonId]
-               ,[DecisionRemark]
-               ,[Remark]
-               ,[IsActive]
-               ,[CreatedByUserId]
-               ,[CreatedDate]
-               ,[UpdatedByUserId]
-               ,[UpdatedDate])  
-    SELECT 
-          NEWID()                                           [CaseAdjudicationId]
-         ,@CaseId                                           [CaseId]
-         ,t.[VersionNo] + 1                                 [VersionNo]
-         ,t.[DecisionId]
-         ,t.[DecisionDate]
-         ,t.[ApprovedAdmissionDate]
-         ,t.[ApprovedAdmissionTime]
-         ,t.[ApprovedDischargeDate]
-         ,t.[ApprovedDischargeTime]
-         ,t.[CoveredAmount]
-         ,t.[NonCoveredAmount]
-         ,0                                                 [CompensateAmount]
-         ,0                                                 [ApprovedMedicalAmount]
-         ,0                                                 [ApprovedCompensateAmount]
-         ,t.[PatientPayAmount]
-         ,t.[IsExgratia]
-         ,t.[ExgratiaAmount]
-         ,t.[DeductibleAmount]
-         ,t.[CoPayAmount]
-         ,t.[CoInsuranceAmount]
-         ,t.[RejectReasonId]
-         ,t.[RejectDate]
-         ,1                                                 [IsLatest]
-         ,t.[ApprovedIPDDayCount]
-         ,t.[ApprovedICUDayCount]
-         ,t.[DecisionResonId]
-         ,t.[DecisionRemark]
-         ,t.[Remark]
-         ,1                                                 [IsActive]
-         ,@UserId                                           [CreatedByUserId]
-         ,@D2                                               [CreatedDate]
-         ,@UserId                                           [UpdatedByUserId]
-         ,@D2                                               [UpdatedDate]
-    FROM #Tmp t;
+    --INSERT INTO [process].[CaseAdjudication]
+    --           ([CaseAdjudicationId]
+    --           ,[CaseId]
+    --           ,[VersionNo]
+    --           ,[DecisionId]
+    --           ,[DecisionDate]
+    --           ,[ApprovedAdmissionDate]
+    --           ,[ApprovedAdmissionTime]
+    --           ,[ApprovedDischargeDate]
+    --           ,[ApprovedDischargeTime]
+    --           ,[CoveredAmount]
+    --           ,[NonCoveredAmount]
+    --           ,[CompensateAmount]
+    --           ,[ApprovedMedicalAmount]
+    --           ,[ApprovedCompensateAmount]
+    --           ,[PatientPayAmount]
+    --           ,[IsExgratia]
+    --           ,[ExgratiaAmount]
+    --           ,[DeductibleAmount]
+    --           ,[CoPayAmount]
+    --           ,[CoInsuranceAmount]
+    --           ,[RejectReasonId]
+    --           ,[RejectDate]
+    --           ,[IsLatest]
+    --           ,[ApprovedIPDDayCount]
+    --           ,[ApprovedICUDayCount]
+    --           ,[DecisionResonId]
+    --           ,[DecisionRemark]
+    --           ,[Remark]
+    --           ,[IsActive]
+    --           ,[CreatedByUserId]
+    --           ,[CreatedDate]
+    --           ,[UpdatedByUserId]
+    --           ,[UpdatedDate])  
+    --SELECT 
+    --      NEWID()                                           [CaseAdjudicationId]
+    --     ,@CaseId                                           [CaseId]
+    --     ,t.[VersionNo] + 1                                 [VersionNo]
+    --     ,t.[DecisionId]
+    --     ,t.[DecisionDate]
+    --     ,t.[ApprovedAdmissionDate]
+    --     ,t.[ApprovedAdmissionTime]
+    --     ,t.[ApprovedDischargeDate]
+    --     ,t.[ApprovedDischargeTime]
+    --     ,t.[CoveredAmount]
+    --     ,t.[NonCoveredAmount]
+    --     ,0                                                 [CompensateAmount]
+    --     ,0                                                 [ApprovedMedicalAmount]
+    --     ,0                                                 [ApprovedCompensateAmount]
+    --     ,t.[PatientPayAmount]
+    --     ,t.[IsExgratia]
+    --     ,t.[ExgratiaAmount]
+    --     ,t.[DeductibleAmount]
+    --     ,t.[CoPayAmount]
+    --     ,t.[CoInsuranceAmount]
+    --     ,t.[RejectReasonId]
+    --     ,t.[RejectDate]
+    --     ,1                                                 [IsLatest]
+    --     ,t.[ApprovedIPDDayCount]
+    --     ,t.[ApprovedICUDayCount]
+    --     ,t.[DecisionResonId]
+    --     ,t.[DecisionRemark]
+    --     ,t.[Remark]
+    --     ,1                                                 [IsActive]
+    --     ,@UserId                                           [CreatedByUserId]
+    --     ,@D2                                               [CreatedDate]
+    --     ,@UserId                                           [UpdatedByUserId]
+    --     ,@D2                                               [UpdatedDate]
+    --FROM #Tmp t;
     
     INSERT INTO [process].[CaseAdjustment]
     (
@@ -235,74 +238,74 @@ BEGIN TRY
         ,@Remark                Remark
     FROM #Tmp
 
-    INSERT INTO [process].[CasePayable]
-               ([CasePayableId]
-               ,[CaseId]
-               ,[CaseAdjudicationId]
-               ,[CaseAdjustmentId]
-               ,[PayableCategoryId]
-               ,[PayableStatusId]
-               ,[PayableAmount]
-               ,[TotalPaidAmount]
-               ,[OutstandingAmount]
-               ,[PayeeTypeId]
-               ,[ToBankId]
-               ,[ToBankName]
-               ,[ToBankAccountNo]
-               ,[IsActive]
-               ,[CreatedByUserId]
-               ,[CreatedDate]
-               ,[UpdatedByUserId]
-               ,[UpdatedDate])
-    SELECT
-     @CasePayable           [CasePayableId]
-     ,@CaseId               CaseId
-     ,CaseAdjudicationId   CaseAdjudicationId
-     ,@CaseAdjustmentId     [CaseAdjustmentId]
-     ,PayableCategoryId    PayableCategoryId
-     ,2                     [PayableStatusId]
-     ,@TotalNetPaidAmount   [PayableAmount]
-     ,0                     [TotalPaidAmount]
-     ,@TotalNetPaidAmount   [OutstandingAmount]
-     ,PayeeTypeId          PayeeTypeId
-     ,@ToBankId             ToBankId
-     ,@ToBankName           ToBankName
-     ,@ToBankAccountNo      ToBankAccountNo
-     ,1                     [IsActive]
-     ,@UserId               [CreatedByUserId]
-     ,@D2                   [CreatedDate]
-     ,@UserId               [UpdatedByUserId]
-     ,@D2                   [UpdatedDate]
-    FROM #Tmp
+    --INSERT INTO [process].[CasePayable]
+    --           ([CasePayableId]
+    --           ,[CaseId]
+    --           ,[CaseAdjudicationId]
+    --           ,[CaseAdjustmentId]
+    --           ,[PayableCategoryId]
+    --           ,[PayableStatusId]
+    --           ,[PayableAmount]
+    --           ,[TotalPaidAmount]
+    --           ,[OutstandingAmount]
+    --           ,[PayeeTypeId]
+    --           ,[ToBankId]
+    --           ,[ToBankName]
+    --           ,[ToBankAccountNo]
+    --           ,[IsActive]
+    --           ,[CreatedByUserId]
+    --           ,[CreatedDate]
+    --           ,[UpdatedByUserId]
+    --           ,[UpdatedDate])
+    --SELECT
+    -- @CasePayable           [CasePayableId]
+    -- ,@CaseId               CaseId
+    -- ,CaseAdjudicationId   CaseAdjudicationId
+    -- ,@CaseAdjustmentId     [CaseAdjustmentId]
+    -- ,PayableCategoryId    PayableCategoryId
+    -- ,2                     [PayableStatusId]
+    -- ,@TotalNetPaidAmount   [PayableAmount]
+    -- ,0                     [TotalPaidAmount]
+    -- ,@TotalNetPaidAmount   [OutstandingAmount]
+    -- ,PayeeTypeId          PayeeTypeId
+    -- ,@ToBankId             ToBankId
+    -- ,@ToBankName           ToBankName
+    -- ,@ToBankAccountNo      ToBankAccountNo
+    -- ,1                     [IsActive]
+    -- ,@UserId               [CreatedByUserId]
+    -- ,@D2                   [CreatedDate]
+    -- ,@UserId               [UpdatedByUserId]
+    -- ,@D2                   [UpdatedDate]
+    --FROM #Tmp
 
-    INSERT INTO [transaction].[TransactionLog]
-               ([TransactionLogId]
-               ,[ClaimId]
-               ,[CaseId]
-               ,[TransactionLogTypeId]
-               ,[ReferenceId]
-               ,[IsActive]
-               ,[Remark]
-               ,[CreatedByUserId]
-               ,[CreatedDate]
-               ,[UpdatedByUserId]
-               ,[UpdatedDate])
-    SELECT
-     NEWID()    [TransactionLogId]
-     ,ClaimId
-     ,@CaseId   [CaseId]
-     ,10        [TransactionLogTypeId]
-     ,NULL      [ReferenceId]
-     ,1         [IsActive]
-     ,NULL      [Remark]
-     ,@UserId   [CreatedByUserId]
-     ,@D2       [CreatedDate]
-     ,@UserId   [UpdatedByUserId]
-     ,@D2       [UpdatedDate]
-    FROM #Tmp
+    --INSERT INTO [transaction].[TransactionLog]
+    --           ([TransactionLogId]
+    --           ,[ClaimId]
+    --           ,[CaseId]
+    --           ,[TransactionLogTypeId]
+    --           ,[ReferenceId]
+    --           ,[IsActive]
+    --           ,[Remark]
+    --           ,[CreatedByUserId]
+    --           ,[CreatedDate]
+    --           ,[UpdatedByUserId]
+    --           ,[UpdatedDate])
+    --SELECT
+    -- NEWID()    [TransactionLogId]
+    -- ,ClaimId
+    -- ,@CaseId   [CaseId]
+    -- ,10        [TransactionLogTypeId]
+    -- ,NULL      [ReferenceId]
+    -- ,1         [IsActive]
+    -- ,NULL      [Remark]
+    -- ,@UserId   [CreatedByUserId]
+    -- ,@D2       [CreatedDate]
+    -- ,@UserId   [UpdatedByUserId]
+    -- ,@D2       [UpdatedDate]
+    --FROM #Tmp
 
 	SET @IsResult	= 1;
-	SET @Msg		= N'∫—π∑÷°  ”‡√Á®';
+	SET @Msg		= N'‡∏ö‡∏±‡∏ô‡∏ó‡∏∂‡∏Å ‡∏™‡∏≥‡πÄ‡∏£‡πá‡∏à';
 
 	COMMIT TRANSACTION
 END TRY
@@ -334,3 +337,5 @@ comment this part if no return result */
             ,@CasePayable CasePayableId;
 
 END
+GO
+
