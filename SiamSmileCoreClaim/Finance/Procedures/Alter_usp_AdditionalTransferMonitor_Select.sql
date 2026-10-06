@@ -1,6 +1,6 @@
 USE [CoreClaim]
 GO
-/****** Object:  StoredProcedure [finance].[usp_AdditionalTransferMonitor_Select]    Script Date: 10/6/2026 9:32:27 AM ******/
+/****** Object:  StoredProcedure [finance].[usp_AdditionalTransferMonitor_Select]    Script Date: 10/6/2026 1:38:29 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -93,9 +93,7 @@ BEGIN
 	AND cc.IsActive = 1
 	AND cl.IsActive = 1
 	AND pm.PaymentTypeId = 4
-	AND (@PaymentStatusId IS NULL
-	  OR pm.PaymentStatusId = @PaymentStatusId
-	)
+	AND pm.PaymentStatusId = @PaymentStatusId
 	AND(@BranchId IS NULL
       OR cl.CreatedByBranchId = @BranchId
 	)
