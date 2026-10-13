@@ -43,6 +43,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Opencode-query", "Opencode-
 		Opencode-query\SelectBillingApproveReview.sql = Opencode-query\SelectBillingApproveReview.sql
 		Opencode-query\SelectBillingMonitor.sql = Opencode-query\SelectBillingMonitor.sql
 		Opencode-query\SelectPaymentHcg.sql = Opencode-query\SelectPaymentHcg.sql
+		Opencode-query\SelectTransferDetail.sql = Opencode-query\SelectTransferDetail.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InsertQuery", "InsertQuery", "{B1C5EE65-831A-4ECF-8EBF-25475795790B}"
+	ProjectSection(SolutionItems) = preProject
+		InsertQuery\InsertHospitalPayment.sql = InsertQuery\InsertHospitalPayment.sql
 	EndProjectSection
 EndProject
 Global
@@ -51,7 +57,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E2F11C40-31B2-F6BF-EDF1-F8536154594A}.Default|Default.ActiveCfg = Default
-		{8E264778-FA4B-495D-83ED-8BAC3F14258E}.Default|Default.ActiveCfg = Default
+		{825FE33C-D094-448D-A6A7-643CC5CCFC8A}.Default|Default.ActiveCfg = Default
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,6 +67,7 @@ Global
 		{3D6AC054-DA18-417E-BD98-58EA9364D8B3} = {A389E4F8-A6AD-4D79-BD86-B0CD429F9AD9}
 		{DCE99821-D307-4778-ABA3-E84CBF26EB15} = {A389E4F8-A6AD-4D79-BD86-B0CD429F9AD9}
 		{9AF31149-F0D1-411B-A68E-EE1A90E5B852} = {A389E4F8-A6AD-4D79-BD86-B0CD429F9AD9}
+		{B1C5EE65-831A-4ECF-8EBF-25475795790B} = {A389E4F8-A6AD-4D79-BD86-B0CD429F9AD9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {989B1D21-3F78-4472-AFD4-D0EE3206C4A0}
