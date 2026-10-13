@@ -497,72 +497,114 @@ BEGIN TRY
             ON r.TransferId = b.BillingPendingTransferId
     WHERE b.IsActive = 1;
 
---SELECT @HospitalId AS HospitalId, @PaymentId AS PaymentId, @PaymentCode AS PaymentCode;
--- =================================================================
-    -- Query 11 : INSERT CasePayable หนึ่งแถวต่อรายการ
-    -- =================================================================
-    --INSERT INTO [process].[CasePayable]
-    --           ([CasePayableId]
-    --           ,[CaseId]
-    --           ,[PayableStatusId]
-    --           ,[PayableAmount]
-    --           ,[TotalPaidAmount]
-    --           ,[OutstandingAmount]
-    --           ,[PayeeTypeId]
-    --           ,[IsActive]
-    --           ,[CreatedByUserId]
-    --           ,[CreatedDate]
-    --           ,[UpdatedByUserId]
-    --           ,[UpdatedDate])
-    SELECT h.CasePayableId  [CasePayableId]
-          ,h.CaseId         [CaseId]
-          ,2                [PayableStatusId]
-          ,hos.NetTotal     [PayableAmount]
-          ,hos.NetTotal     [TotalPaidAmount]
-          ,hos.NetTotal     [OutstandingAmount]
-          ,3                [PayeeTypeId]
-          ,1                [IsActive]
-          ,@UserId          [CreatedByUserId]
-          ,@D2              [CreatedDate]
-          ,@UserId          [UpdatedByUserId]
-          ,@D2              [UpdatedDate]
-    FROM @CaseRows AS h
-    INNER JOIN @HospitalTotals hos
-        ON h.HospitalId = hos.HospitalId;
-
     DECLARE @Start INT = 1;
 
     WHILE (@Start <= @TotalRow)
     BEGIN
         
-        DECLARE @BankAccountNo VARCHAR(50);
+        DECLARE @BankAccountNo VARCHAR(50) = '-';
         DECLARE @PaymentId UNIQUEIDENTIFIER = NEWID();
-        SELECT @BankAccountNo = (SELECT BankAccountNo FROM @HospitalTotals WHERE rwId = @Start )
+        SET @BankAccountNo = 
+            (SELECT REPLACE(BankAccountNo, '-', '') BankAccountNo FROM @HospitalTotals WHERE rwId = @Start )
 
-        SELECT @PaymentId           PaymentId
-              ,NULL                 PaymentCode
-              ,2
-              ,2
-              ,3
-              ,2
-              ,NULL
-              ,p.GrossTotal
-              ,p.TaxTotal
-              ,p.NetTotal
+    -- =================================================================
+        -- Query 11 : INSERT CasePayable หนึ่งแถวต่อรายการ
+        -- =================================================================
+        INSERT INTO [process].[CasePayable]
+                   ([CasePayableId]
+                   ,[CaseId]
+                   ,[CaseAdjudicationId]
+                   ,[CaseAdjustmentId]
+                   ,[PayableCategoryId]
+                   ,[PayableStatusId]
+                   ,[PayableAmount]
+                   ,[TotalPaidAmount]
+                   ,[OutstandingAmount]
+                   ,[PayeeTypeId]
+                   ,[ToBankId]
+                   ,[ToBankName]
+                   ,[ToBankAccountNo]
+                   ,[IsActive]
+                   ,[CreatedByUserId]
+                   ,[CreatedDate]
+                   ,[UpdatedByUserId]
+                   ,[UpdatedDate])
+    SELECT
+     h.CasePayableId           [CasePayableId]
+     ,h.CaseId               CaseId
+     ,NULL   CaseAdjudicationId
+     ,NULL     [CaseAdjustmentId]
+     ,NULL    PayableCategoryId
+     ,2                     [PayableStatusId]
+     ,hos.NetTotal     [PayableAmount]
+     ,hos.NetTotal     [TotalPaidAmount]
+     ,hos.NetTotal     [OutstandingAmount]
+     ,3                     PayeeTypeId
+     ,NULL             ToBankId
+     ,NULL           ToBankName
+     ,@BankAccountNo      ToBankAccountNo
+     ,1                     [IsActive]
+     ,@UserId               [CreatedByUserId]
+     ,@D2                   [CreatedDate]
+     ,@UserId               [UpdatedByUserId]
+     ,@D2                   [UpdatedDate]
+        FROM @CaseRows AS h
+        INNER JOIN @HospitalTotals hos
+            ON h.HospitalId = hos.HospitalId;
+
+        --INSERT INTO [finance].[Payment]
+        --           ([PaymentId]
+        --           ,[PaymentCode]
+        --           ,[PaymentMethodId]
+        --           ,[PaymentTypeId]
+        --           ,[PayeeTypeId]
+        --           ,[PaymentStatusId]
+        --           ,[PaymentDate]
+        --           ,[TotalGrossPaidAmount]
+        --           ,[TotalTaxAmount]
+        --           ,[TotalNetPaidAmount]
+        --           ,[ToBank]
+        --           ,[ToAccountNo]
+        --           ,[ToAccountName]
+        --           ,[FromBank]
+        --           ,[FromAccountNo]
+        --           ,[FromAccountName]
+        --           ,[PhoneNo]
+        --           ,[IsActive]
+        --           ,[CreatedByUserId]
+        --           ,[CreatedDate]
+        --           ,[UpdatedByUserId]
+        --           ,[UpdatedDate]
+        --           ,[ToBankId]
+        --           ,[EstimatedDate]
+        --           ,[Email]
+        --           ,[IsSendEmail])        
+        SELECT @PaymentId           [PaymentId]
+              ,NULL                 [PaymentCode]
+              ,2                    [PaymentMethodId]
+              ,2                    [PaymentTypeId]
+              ,3                    [PayeeTypeId]
+              ,2                    [PaymentStatusId]
+              ,NULL                 [PaymentDate]
+              ,p.GrossTotal         [TotalGrossPaidAmount]
+              ,p.TaxTotal           [TotalTaxAmount]
+              ,p.NetTotal           [TotalNetPaidAmount]
               ,p.BankName           [ToBank]
               ,@BankAccountNo       [ToAccountNo]
               ,p.BankAccountName    [ToAccountName]
-              ,NULL
-              ,NULL
-              ,NULL
-              ,@PhoneNo
-              ,1
-              ,@UserId
-              ,@D2
-              ,@UserId
-              ,@D2
+              ,NULL                 [FromBank]
+              ,NULL                 [FromAccountNo]
+              ,NULL                 [FromAccountName]
+              ,@PhoneNo             [PhoneNo]
+              ,1                    [IsActive]
+              ,@UserId              [CreatedByUserId]
+              ,@D2                  [CreatedDate]
+              ,@UserId              [UpdatedByUserId]
+              ,@D2                  [UpdatedDate]
               ,p.BankId             [ToBankId]
-              ,p.EstimatedDate
+              ,p.EstimatedDate      [EstimatedDate]
+              ,NULL                 [Email]
+              ,NULL                 [IsSendEmail]
         FROM @HospitalTotals AS p;   
 
     -- =================================================================
@@ -670,7 +712,6 @@ SELECT @IsResult AS IsSuccess
       ,@EstimatedDate AS EstimateDate
       ,@PaymentId AS Refcode
 FROM @HospitalTotals AS g
-CROSS JOIN @CaseRows AS h
-WHERE g.HospitalId = @HospitalId;
+CROSS JOIN @CaseRows AS h;
 
 END;
