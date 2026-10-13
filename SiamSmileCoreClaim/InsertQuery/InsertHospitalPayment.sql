@@ -1,39 +1,39 @@
-USE [CoreClaim]
+ÔªøUSE [CoreClaim]
 GO
 
 /*
-    CreatePaymentHospitalAsync ó ·¬° query µ“¡ Ë«π / √Ÿª·∫∫ Result template
-    „™È™◊ËÕ schema/table ®“° SQL ·π∫ ·≈–„™È logic ®“° C#
-    „™È DECLARE @... TABLE + INSERT INTO ... SELECT; ‰¡Ë¡’ temp table
-    „™È @IsResult / @Result / @Msg ·≈– GOTO RESULT  ”À√—∫ validation
-    ∑ÿ° UPDATE/INSERT µ“√“ß®√‘ßÕ¬ŸË„π transaction ‡¥’¬«µ“¡ template
-    SELECT ‡µ√’¬¡¢ÈÕ¡Ÿ≈Õ¬ŸË°ËÕπ transaction; UPDATE ®Õß√“¬°“√Õ¬ŸË¿“¬„π
-    À“°≈È¡‡À≈« rollback ∑—Èß°“√®Õß·≈–°“√ √È“ß Payment µË“ß®“° C# ‡¥‘¡
-    ∑’Ë SaveChanges °“√®Õß°ËÕπ‡√‘Ë¡ transaction À≈—°
+    CreatePaymentHospitalAsync ‚Äî ‡πÅ‡∏¢‡∏Å query ‡∏ï‡∏≤‡∏°‡∏™‡πà‡∏ß‡∏ô / ‡∏£‡∏π‡∏õ‡πÅ‡∏ö‡∏ö Result template
+    ‡πÉ‡∏ä‡πâ‡∏ä‡∏∑‡πà‡∏≠ schema/table ‡∏à‡∏≤‡∏Å SQL ‡πÅ‡∏ô‡∏ö ‡πÅ‡∏•‡∏∞‡πÉ‡∏ä‡πâ logic ‡∏à‡∏≤‡∏Å C#
+    ‡πÉ‡∏ä‡πâ DECLARE @... TABLE + INSERT INTO ... SELECT; ‡πÑ‡∏°‡πà‡∏°‡∏µ temp table
+    ‡πÉ‡∏ä‡πâ @IsResult / @Result / @Msg ‡πÅ‡∏•‡∏∞ GOTO RESULT ‡∏™‡∏≥‡∏´‡∏£‡∏±‡∏ö validation
+    ‡∏ó‡∏∏‡∏Å UPDATE/INSERT ‡∏ï‡∏≤‡∏£‡∏≤‡∏á‡∏à‡∏£‡∏¥‡∏á‡∏≠‡∏¢‡∏π‡πà‡πÉ‡∏ô transaction ‡πÄ‡∏î‡∏µ‡∏¢‡∏ß‡∏ï‡∏≤‡∏° template
+    SELECT ‡πÄ‡∏ï‡∏£‡∏µ‡∏¢‡∏°‡∏Ç‡πâ‡∏≠‡∏°‡∏π‡∏•‡∏≠‡∏¢‡∏π‡πà‡∏Å‡πà‡∏≠‡∏ô transaction; UPDATE ‡∏à‡∏≠‡∏á‡∏£‡∏≤‡∏¢‡∏Å‡∏≤‡∏£‡∏≠‡∏¢‡∏π‡πà‡∏†‡∏≤‡∏¢‡πÉ‡∏ô
+    ‡∏´‡∏≤‡∏Å‡∏•‡πâ‡∏°‡πÄ‡∏´‡∏•‡∏ß rollback ‡∏ó‡∏±‡πâ‡∏á‡∏Å‡∏≤‡∏£‡∏à‡∏≠‡∏á‡πÅ‡∏•‡∏∞‡∏Å‡∏≤‡∏£‡∏™‡∏£‡πâ‡∏≤‡∏á Payment ‡∏ï‡πà‡∏≤‡∏á‡∏à‡∏≤‡∏Å C# ‡πÄ‡∏î‡∏¥‡∏°
+    ‡∏ó‡∏µ‡πà SaveChanges ‡∏Å‡∏≤‡∏£‡∏à‡∏≠‡∏á‡∏Å‡πà‡∏≠‡∏ô‡πÄ‡∏£‡∏¥‡πà‡∏° transaction ‡∏´‡∏•‡∏±‡∏Å
 
-    „™ÈÀπ÷Ëß‚√ßæ¬“∫“≈µËÕ√Õ∫: ‡µ‘¡ @HospitalId À“°‡≈◊Õ°À≈“¬‚√ßæ¬“∫“≈
-    ·≈–„ÀÈ application  Ëß√“¬°“√·¬°µ“¡‚√ßæ¬“∫“≈µ“¡§”Õ∏‘∫“¬‡¥‘¡
-    @UserId = 1 µ“¡ template; ‡ª≈’Ë¬π„ÀÈµ√ßºŸÈ„™È®√‘ß°ËÕπ√—π
-    °√≥’À≈“¬‚√ßæ¬“∫“≈∑’ËµÈÕß commit æ√ÈÕ¡°—π „ÀÈ application §ÿ¡ transaction
-    ‡¥’¬«∑ÿ°°≈ÿË¡·≈–√—∫º‘¥™Õ∫°“√ bind ∫—≠™’·¬°°≈ÿË¡
+    ‡πÉ‡∏ä‡πâ‡∏´‡∏ô‡∏∂‡πà‡∏á‡πÇ‡∏£‡∏á‡∏û‡∏¢‡∏≤‡∏ö‡∏≤‡∏•‡∏ï‡πà‡∏≠‡∏£‡∏≠‡∏ö: ‡πÄ‡∏ï‡∏¥‡∏° @HospitalId ‡∏´‡∏≤‡∏Å‡πÄ‡∏•‡∏∑‡∏≠‡∏Å‡∏´‡∏•‡∏≤‡∏¢‡πÇ‡∏£‡∏á‡∏û‡∏¢‡∏≤‡∏ö‡∏≤‡∏•
+    ‡πÅ‡∏•‡∏∞‡πÉ‡∏´‡πâ application ‡∏™‡πà‡∏á‡∏£‡∏≤‡∏¢‡∏Å‡∏≤‡∏£‡πÅ‡∏¢‡∏Å‡∏ï‡∏≤‡∏°‡πÇ‡∏£‡∏á‡∏û‡∏¢‡∏≤‡∏ö‡∏≤‡∏•‡∏ï‡∏≤‡∏°‡∏Ñ‡∏≥‡∏≠‡∏ò‡∏¥‡∏ö‡∏≤‡∏¢‡πÄ‡∏î‡∏¥‡∏°
+    @UserId = 1 ‡∏ï‡∏≤‡∏° template; ‡πÄ‡∏õ‡∏•‡∏µ‡πà‡∏¢‡∏ô‡πÉ‡∏´‡πâ‡∏ï‡∏£‡∏á‡∏ú‡∏π‡πâ‡πÉ‡∏ä‡πâ‡∏à‡∏£‡∏¥‡∏á‡∏Å‡πà‡∏≠‡∏ô‡∏£‡∏±‡∏ô
+    ‡∏Å‡∏£‡∏ì‡∏µ‡∏´‡∏•‡∏≤‡∏¢‡πÇ‡∏£‡∏á‡∏û‡∏¢‡∏≤‡∏ö‡∏≤‡∏•‡∏ó‡∏µ‡πà‡∏ï‡πâ‡∏≠‡∏á commit ‡∏û‡∏£‡πâ‡∏≠‡∏°‡∏Å‡∏±‡∏ô ‡πÉ‡∏´‡πâ application ‡∏Ñ‡∏∏‡∏° transaction
+    ‡πÄ‡∏î‡∏µ‡∏¢‡∏ß‡∏ó‡∏∏‡∏Å‡∏Å‡∏•‡∏∏‡πà‡∏°‡πÅ‡∏•‡∏∞‡∏£‡∏±‡∏ö‡∏ú‡∏¥‡∏î‡∏ä‡∏≠‡∏ö‡∏Å‡∏≤‡∏£ bind ‡∏ö‡∏±‡∏ç‡∏ä‡∏µ‡πÅ‡∏¢‡∏Å‡∏Å‡∏•‡∏∏‡πà‡∏°
 
-    Always Encrypted: SELECT ∫—≠™’·∫∫ raw „ÀÈ client ∂Õ¥√À— ;
-    client ≈∫ '-' ·≈È« bind @ToAccountNo ·≈– @PhoneNo ¥È«¬™π‘¥/¢π“¥µ√ß
-    §Õ≈—¡πÏ®√‘ß ‡ª‘¥ Column Encryption Setting=Enabled; „π SSMS ‡ª‘¥
-    Enable Parameterization for Always Encrypted ¥È«¬
-    DECLARE µ—«·ª√Õ¬Ë“ß‡¥’¬«‰¡Ë‰¥È∑”„ÀÈ server ‡¢È“√À— „ÀÈ
-    ™π‘¥ table variable Õ‘ßµ—«Õ¬Ë“ß SQL ·π∫ (‰¡Ë‰¥È√—∫ DDL ®√‘ß)
-    µ√«®™π‘¥¢ÈÕ¡Ÿ≈/scale/length „π∞“π¢ÈÕ¡Ÿ≈°ËÕπ„™È®√‘ß
+    Always Encrypted: SELECT ‡∏ö‡∏±‡∏ç‡∏ä‡∏µ‡πÅ‡∏ö‡∏ö raw ‡πÉ‡∏´‡πâ client ‡∏ñ‡∏≠‡∏î‡∏£‡∏´‡∏±‡∏™;
+    client ‡∏•‡∏ö '-' ‡πÅ‡∏•‡πâ‡∏ß bind @ToAccountNo ‡πÅ‡∏•‡∏∞ @PhoneNo ‡∏î‡πâ‡∏ß‡∏¢‡∏ä‡∏ô‡∏¥‡∏î/‡∏Ç‡∏ô‡∏≤‡∏î‡∏ï‡∏£‡∏á
+    ‡∏Ñ‡∏≠‡∏•‡∏±‡∏°‡∏ô‡πå‡∏à‡∏£‡∏¥‡∏á ‡πÄ‡∏õ‡∏¥‡∏î Column Encryption Setting=Enabled; ‡πÉ‡∏ô SSMS ‡πÄ‡∏õ‡∏¥‡∏î
+    Enable Parameterization for Always Encrypted ‡∏î‡πâ‡∏ß‡∏¢
+    DECLARE ‡∏ï‡∏±‡∏ß‡πÅ‡∏õ‡∏£‡∏≠‡∏¢‡πà‡∏≤‡∏á‡πÄ‡∏î‡∏µ‡∏¢‡∏ß‡πÑ‡∏°‡πà‡πÑ‡∏î‡πâ‡∏ó‡∏≥‡πÉ‡∏´‡πâ server ‡πÄ‡∏Ç‡πâ‡∏≤‡∏£‡∏´‡∏±‡∏™‡πÉ‡∏´‡πâ
+    ‡∏ä‡∏ô‡∏¥‡∏î table variable ‡∏≠‡∏¥‡∏á‡∏ï‡∏±‡∏ß‡∏≠‡∏¢‡πà‡∏≤‡∏á SQL ‡πÅ‡∏ô‡∏ö (‡πÑ‡∏°‡πà‡πÑ‡∏î‡πâ‡∏£‡∏±‡∏ö DDL ‡∏à‡∏£‡∏¥‡∏á)
+    ‡∏ï‡∏£‡∏ß‡∏à‡∏ä‡∏ô‡∏¥‡∏î‡∏Ç‡πâ‡∏≠‡∏°‡∏π‡∏•/scale/length ‡πÉ‡∏ô‡∏ê‡∏≤‡∏ô‡∏Ç‡πâ‡∏≠‡∏°‡∏π‡∏•‡∏Å‡πà‡∏≠‡∏ô‡πÉ‡∏ä‡πâ‡∏à‡∏£‡∏¥‡∏á
 
-    §ß Ÿµ√¿“…’À—«µ“¡ C#: SUM(Õ—µ√“¿“…’) * SUM(¬Õ¥) / 100;
-    Õ“®‰¡Ë‡∑Ë“°—∫ SUM(¿“…’ PaymentItem) ‡¡◊ËÕ¡’À≈“¬√“¬°“√
-    response.TotalNetPaidAmount §ß¬Õ¥°ËÕπ¿“…’µ“¡ C#
-    FirstOrDefault ¢Õß C# ‰¡Ë¡’ ORDER BY; ·∂«µ—«·∑π„π SQL ‡√’¬ß TransferId
-    SQL ‡µ√’¬¡ payload ·µË‰¡Ë publish message À√◊Õ∑” logging „ÀÈ‡Õß
-    Query √«¡¬Õ¥„™È derived table ·∑π CTE ‡æ◊ËÕµ—¥®ÿ¥ WITH ÕÕ°®“° Ë«ππ’È
-    µ—«·ª√∑’Ë√Õ§Ë“®“° SELECT/EXEC °”Àπ¥ = NULL ™—¥‡®π;
-    NEWID() „™È‡©æ“–§Ë“ UNIQUEIDENTIFIER ‡∑Ë“π—Èπ
-    ¬—ß‰¡Ë‰¥È execute °—∫∞“π¢ÈÕ¡Ÿ≈®√‘ß
+    ‡∏Ñ‡∏á‡∏™‡∏π‡∏ï‡∏£‡∏†‡∏≤‡∏©‡∏µ‡∏´‡∏±‡∏ß‡∏ï‡∏≤‡∏° C#: SUM(‡∏≠‡∏±‡∏ï‡∏£‡∏≤‡∏†‡∏≤‡∏©‡∏µ) * SUM(‡∏¢‡∏≠‡∏î) / 100;
+    ‡∏≠‡∏≤‡∏à‡πÑ‡∏°‡πà‡πÄ‡∏ó‡πà‡∏≤‡∏Å‡∏±‡∏ö SUM(‡∏†‡∏≤‡∏©‡∏µ PaymentItem) ‡πÄ‡∏°‡∏∑‡πà‡∏≠‡∏°‡∏µ‡∏´‡∏•‡∏≤‡∏¢‡∏£‡∏≤‡∏¢‡∏Å‡∏≤‡∏£
+    response.TotalNetPaidAmount ‡∏Ñ‡∏á‡∏¢‡∏≠‡∏î‡∏Å‡πà‡∏≠‡∏ô‡∏†‡∏≤‡∏©‡∏µ‡∏ï‡∏≤‡∏° C#
+    FirstOrDefault ‡∏Ç‡∏≠‡∏á C# ‡πÑ‡∏°‡πà‡∏°‡∏µ ORDER BY; ‡πÅ‡∏ñ‡∏ß‡∏ï‡∏±‡∏ß‡πÅ‡∏ó‡∏ô‡πÉ‡∏ô SQL ‡πÄ‡∏£‡∏µ‡∏¢‡∏á TransferId
+    SQL ‡πÄ‡∏ï‡∏£‡∏µ‡∏¢‡∏° payload ‡πÅ‡∏ï‡πà‡πÑ‡∏°‡πà publish message ‡∏´‡∏£‡∏∑‡∏≠‡∏ó‡∏≥ logging ‡πÉ‡∏´‡πâ‡πÄ‡∏≠‡∏á
+    Query ‡∏£‡∏ß‡∏°‡∏¢‡∏≠‡∏î‡πÉ‡∏ä‡πâ derived table ‡πÅ‡∏ó‡∏ô CTE ‡πÄ‡∏û‡∏∑‡πà‡∏≠‡∏ï‡∏±‡∏î‡∏à‡∏∏‡∏î WITH ‡∏≠‡∏≠‡∏Å‡∏à‡∏≤‡∏Å‡∏™‡πà‡∏ß‡∏ô‡∏ô‡∏µ‡πâ
+    ‡∏ï‡∏±‡∏ß‡πÅ‡∏õ‡∏£‡∏ó‡∏µ‡πà‡∏£‡∏≠‡∏Ñ‡πà‡∏≤‡∏à‡∏≤‡∏Å SELECT/EXEC ‡∏Å‡∏≥‡∏´‡∏ô‡∏î = NULL ‡∏ä‡∏±‡∏î‡πÄ‡∏à‡∏ô;
+    NEWID() ‡πÉ‡∏ä‡πâ‡πÄ‡∏â‡∏û‡∏≤‡∏∞‡∏Ñ‡πà‡∏≤ UNIQUEIDENTIFIER ‡πÄ‡∏ó‡πà‡∏≤‡∏ô‡∏±‡πâ‡∏ô
+    ‡∏¢‡∏±‡∏á‡πÑ‡∏°‡πà‡πÑ‡∏î‡πâ execute ‡∏Å‡∏±‡∏ö‡∏ê‡∏≤‡∏ô‡∏Ç‡πâ‡∏≠‡∏°‡∏π‡∏•‡∏à‡∏£‡∏¥‡∏á
 */
 SET NOCOUNT ON;
 SET XACT_ABORT ON;
@@ -47,12 +47,12 @@ DECLARE @Result VARCHAR(100) = '';
 DECLARE @Msg NVARCHAR(500) = N'';
 
 -- =====================================================================
--- Query 00 : °”Àπ¥ input ®“° request / login / environment
+-- Query 00 : ‡∏Å‡∏≥‡∏´‡∏ô‡∏î input ‡∏à‡∏≤‡∏Å request / login / environment
 -- =====================================================================
 DECLARE @CurrentUserName NVARCHAR(200) = N'';   -- Firstname + ' ' + Lastname
 DECLARE @EnvZone NVARCHAR(20) = N'UAT';
-DECLARE @ProductionBankParametersBound BIT = 0; -- client µ—Èß 1 À≈—ß bind §Ë“∫—≠™’ PROD §√∫
-DECLARE @HospitalId INT = NULL;                -- ‡µ‘¡®“° Query 06
+DECLARE @ProductionBankParametersBound BIT = 0; -- client ‡∏ï‡∏±‡πâ‡∏á 1 ‡∏´‡∏•‡∏±‡∏á bind ‡∏Ñ‡πà‡∏≤‡∏ö‡∏±‡∏ç‡∏ä‡∏µ PROD ‡∏Ñ‡∏£‡∏ö
+DECLARE @HospitalId INT = NULL;                -- ‡πÄ‡∏ï‡∏¥‡∏°‡∏à‡∏≤‡∏Å Query 06
 DECLARE @PaymentCode VARCHAR(50) = NULL;
 DECLARE @AutoPayDelayDays INT = NULL;
 DECLARE @BillingDate DATE = NULL;
@@ -63,13 +63,13 @@ DECLARE @TaxTotal DECIMAL(18,4) = NULL;
 DECLARE @NetTotal DECIMAL(18,4) = NULL;
 DECLARE @EstimatedDate DATETIME2 = NULL;
 DECLARE @ToBankId INT = 3;
-DECLARE @ToBank NVARCHAR(50) = N'°√ÿß‰∑¬';
+DECLARE @ToBank NVARCHAR(50) = N'‡∏Å‡∏£‡∏∏‡∏á‡πÑ‡∏ó‡∏¢';
 DECLARE @ToAccountName NVARCHAR(255) = N'Account unit test UAT';
 DECLARE @ToAccountNo VARCHAR(50) = '1821000001';
 DECLARE @PhoneNo VARCHAR(50) = '0899999999';
--- PROD: bind §Ë“∏π“§“√®“° Query 07 ·¬°µËÕ HospitalId ºË“π client
--- @ToAccountNo = account.Replace("-", "") ?? "" µ“¡ C#
--- §Ë“∑¥ Õ∫ UAT ¥È“π∫πµ√ß C#; ÀÈ“¡„™È§Ë“∑¥ Õ∫°—∫ PROD
+-- PROD: bind ‡∏Ñ‡πà‡∏≤‡∏ò‡∏ô‡∏≤‡∏Ñ‡∏≤‡∏£‡∏à‡∏≤‡∏Å Query 07 ‡πÅ‡∏¢‡∏Å‡∏ï‡πà‡∏≠ HospitalId ‡∏ú‡πà‡∏≤‡∏ô client
+-- @ToAccountNo = account.Replace("-", "") ?? "" ‡∏ï‡∏≤‡∏° C#
+-- ‡∏Ñ‡πà‡∏≤‡∏ó‡∏î‡∏™‡∏≠‡∏ö UAT ‡∏î‡πâ‡∏≤‡∏ô‡∏ö‡∏ô‡∏ï‡∏£‡∏á C#; ‡∏´‡πâ‡∏≤‡∏°‡πÉ‡∏ä‡πâ‡∏Ñ‡πà‡∏≤‡∏ó‡∏î‡∏™‡∏≠‡∏ö‡∏Å‡∏±‡∏ö PROD
 
 DECLARE @RequestedTransfers TABLE
 (
@@ -116,12 +116,12 @@ DECLARE @HospitalTotals TABLE
 /*Setup OFF/ON Store Procedure*/
 IF @IsResult = 0
 BEGIN
-    SET @Msg = N'ª‘¥„™Èß“π';
+    SET @Msg = N'‡∏õ‡∏¥‡∏î‡πÉ‡∏ä‡πâ‡∏á‡∏≤‡∏ô';
     GOTO RESULT;
 END;
 -----------------------------------
 
--- ‡æ‘Ë¡‰¥ÈÀ≈“¬·∂«; PRIMARY KEY ∑”„ÀÈµÈÕß Ëß Distinct TransferId ‡™Ëπ C#
+-- ‡πÄ‡∏û‡∏¥‡πà‡∏°‡πÑ‡∏î‡πâ‡∏´‡∏•‡∏≤‡∏¢‡πÅ‡∏ñ‡∏ß; PRIMARY KEY ‡∏ó‡∏≥‡πÉ‡∏´‡πâ‡∏ï‡πâ‡∏≠‡∏á‡∏™‡πà‡∏á Distinct TransferId ‡πÄ‡∏ä‡πà‡∏ô C#
 INSERT INTO @RequestedTransfers
            ([TransferId])
      VALUES
@@ -130,27 +130,27 @@ INSERT INTO @RequestedTransfers
 IF ISNULL(@EnvZone, N'') <> N'UAT' AND @ProductionBankParametersBound = 0
 BEGIN
     SET @IsResult = 0;
-    SET @Msg = N'°√ÿ≥“ Ëß§Ë“∫—≠™’ PROD ºË“π client ·≈–µ—Èß @ProductionBankParametersBound = 1';
+    SET @Msg = N'‡∏Å‡∏£‡∏∏‡∏ì‡∏≤‡∏™‡πà‡∏á‡∏Ñ‡πà‡∏≤‡∏ö‡∏±‡∏ç‡∏ä‡∏µ PROD ‡∏ú‡πà‡∏≤‡∏ô client ‡πÅ‡∏•‡∏∞‡∏ï‡∏±‡πâ‡∏á @ProductionBankParametersBound = 1';
     GOTO RESULT;
 END;
 
 IF @UserId IS NULL
 BEGIN
     SET @IsResult = 0;
-    SET @Msg = N'°√ÿ≥“°”Àπ¥ @UserId °ËÕπ¥”‡π‘π°“√';
+    SET @Msg = N'‡∏Å‡∏£‡∏∏‡∏ì‡∏≤‡∏Å‡∏≥‡∏´‡∏ô‡∏î @UserId ‡∏Å‡πà‡∏≠‡∏ô‡∏î‡∏≥‡πÄ‡∏ô‡∏¥‡∏ô‡∏Å‡∏≤‡∏£';
     GOTO RESULT;
 END;
 
 IF NOT EXISTS (SELECT 1 FROM @RequestedTransfers)
 BEGIN
     SET @IsResult = 0;
-    SET @Msg = N'°√ÿ≥“‡≈◊Õ°√“¬°“√Õ¬Ë“ßπÈÕ¬ 1 √“¬°“√';
+    SET @Msg = N'‡∏Å‡∏£‡∏∏‡∏ì‡∏≤‡πÄ‡∏•‡∏∑‡∏≠‡∏Å‡∏£‡∏≤‡∏¢‡∏Å‡∏≤‡∏£‡∏≠‡∏¢‡πà‡∏≤‡∏á‡∏ô‡πâ‡∏≠‡∏¢ 1 ‡∏£‡∏≤‡∏¢‡∏Å‡∏≤‡∏£';
     GOTO RESULT;
 END;
 
 /* TODO Select Query Here */
 -- =====================================================================
--- Query 01 : µ√«®™π‘¥§Õ≈—¡πÏ Payment ·≈–™◊ËÕæ“√“¡‘‡µÕ√Ï procedure ®√‘ß
+-- Query 01 : ‡∏ï‡∏£‡∏ß‡∏à‡∏ä‡∏ô‡∏¥‡∏î‡∏Ñ‡∏≠‡∏•‡∏±‡∏°‡∏ô‡πå Payment ‡πÅ‡∏•‡∏∞‡∏ä‡∏∑‡πà‡∏≠‡∏û‡∏≤‡∏£‡∏≤‡∏°‡∏¥‡πÄ‡∏ï‡∏≠‡∏£‡πå procedure ‡∏à‡∏£‡∏¥‡∏á
 -- =====================================================================
 --SELECT c.[name] AS ColumnName
 --      ,TYPE_NAME(c.user_type_id) AS DataType
@@ -173,7 +173,7 @@ END;
 --WHERE p.object_id = OBJECT_ID(N'process.usp_GenerateCodeBE')
 --ORDER BY p.parameter_id;
 -- =====================================================================
--- Query 02 : SELECT √“¬°“√ active ®“° requests
+-- Query 02 : SELECT ‡∏£‡∏≤‡∏¢‡∏Å‡∏≤‡∏£ active ‡∏à‡∏≤‡∏Å requests
 -- =====================================================================
 --SELECT b.BillingPendingTransferId
 --      ,b.BillingDetailId
@@ -186,7 +186,7 @@ END;
 --        ON r.TransferId = b.BillingPendingTransferId
 --WHERE b.IsActive = 1;
 -- =====================================================================
--- Query 03 : SELECT µ√«®ºŸÈ„™Èß“πÕ◊Ëπ∑’Ë®Õß√“¬°“√‰«È
+-- Query 03 : SELECT ‡∏ï‡∏£‡∏ß‡∏à‡∏ú‡∏π‡πâ‡πÉ‡∏ä‡πâ‡∏á‡∏≤‡∏ô‡∏≠‡∏∑‡πà‡∏ô‡∏ó‡∏µ‡πà‡∏à‡∏≠‡∏á‡∏£‡∏≤‡∏¢‡∏Å‡∏≤‡∏£‡πÑ‡∏ß‡πâ
 -- =====================================================================
 --SELECT b.BillingPendingTransferId AS DuplicateTransferId
 --      ,b.TransactionByUserId
@@ -197,9 +197,9 @@ END;
 --  AND b.TransactionByUserId IS NOT NULL
 --  AND b.TransactionByUserId <> @UserId;
 -- =====================================================================
--- Query 04 : SELECT ¬Õ¥§È“ß®Ë“¬ + ‡§  + ‡§≈¡ + Õ—µ√“¿“…’
--- ‰¡Ë¥÷ß§Õ≈—¡πÏ∫—≠™’‡¢È“√À— ≈ß table variable
--- CasePayableId ∂Ÿ° √È“ß∑’Ë·∂«µÈπ∑“ß‡æ◊ËÕ‡™◊ËÕ¡ PaymentItem ∂Ÿ°§ŸË
+-- Query 04 : SELECT ‡∏¢‡∏≠‡∏î‡∏Ñ‡πâ‡∏≤‡∏á‡∏à‡πà‡∏≤‡∏¢ + ‡πÄ‡∏Ñ‡∏™ + ‡πÄ‡∏Ñ‡∏•‡∏° + ‡∏≠‡∏±‡∏ï‡∏£‡∏≤‡∏†‡∏≤‡∏©‡∏µ
+-- ‡πÑ‡∏°‡πà‡∏î‡∏∂‡∏á‡∏Ñ‡∏≠‡∏•‡∏±‡∏°‡∏ô‡πå‡∏ö‡∏±‡∏ç‡∏ä‡∏µ‡πÄ‡∏Ç‡πâ‡∏≤‡∏£‡∏´‡∏±‡∏™‡∏•‡∏á table variable
+-- CasePayableId ‡∏ñ‡∏π‡∏Å‡∏™‡∏£‡πâ‡∏≤‡∏á‡∏ó‡∏µ‡πà‡πÅ‡∏ñ‡∏ß‡∏ï‡πâ‡∏ô‡∏ó‡∏≤‡∏á‡πÄ‡∏û‡∏∑‡πà‡∏≠‡πÄ‡∏ä‡∏∑‡πà‡∏≠‡∏° PaymentItem ‡∏ñ‡∏π‡∏Å‡∏Ñ‡∏π‡πà
 -- =====================================================================
 INSERT INTO @CaseRows
            (
@@ -248,7 +248,7 @@ WHERE b.IsActive = 1
 
 --SELECT * FROM @CaseRows ORDER BY HospitalId, BillingPendingTransferId;
 -- =====================================================================
--- Query 05 : SELECT TransferId ∑’Ë‰¡Ë¡’¢ÈÕ¡Ÿ≈; validate °ËÕπ √È“ß Payment
+-- Query 05 : SELECT TransferId ‡∏ó‡∏µ‡πà‡πÑ‡∏°‡πà‡∏°‡∏µ‡∏Ç‡πâ‡∏≠‡∏°‡∏π‡∏•; validate ‡∏Å‡πà‡∏≠‡∏ô‡∏™‡∏£‡πâ‡∏≤‡∏á Payment
 -- =====================================================================
 --SELECT r.TransferId AS NotFoundTransferId
 --FROM @RequestedTransfers AS r
@@ -265,14 +265,14 @@ IF EXISTS
 )
 BEGIN
     SET @IsResult = 0;
-    SET @Msg = N'‰¡Ëæ∫√“¬°“√§È“ß®Ë“¬∑’Ë¬—ß‰¡Ë‰¥È®—¥°≈ÿË¡¢Õß∫“ß TransferId';
+    SET @Msg = N'‡πÑ‡∏°‡πà‡∏û‡∏ö‡∏£‡∏≤‡∏¢‡∏Å‡∏≤‡∏£‡∏Ñ‡πâ‡∏≤‡∏á‡∏à‡πà‡∏≤‡∏¢‡∏ó‡∏µ‡πà‡∏¢‡∏±‡∏á‡πÑ‡∏°‡πà‡πÑ‡∏î‡πâ‡∏à‡∏±‡∏î‡∏Å‡∏•‡∏∏‡πà‡∏°‡∏Ç‡∏≠‡∏á‡∏ö‡∏≤‡∏á TransferId';
     GOTO RESULT;
 END;
 
 IF NOT EXISTS (SELECT 1 FROM @CaseRows)
 BEGIN
     SET @IsResult = 0;
-    SET @Msg = N'‰¡Ëæ∫√“¬°“√§È“ß®Ë“¬ ”À√—∫‡§ ∑’Ë‡≈◊Õ°';
+    SET @Msg = N'‡πÑ‡∏°‡πà‡∏û‡∏ö‡∏£‡∏≤‡∏¢‡∏Å‡∏≤‡∏£‡∏Ñ‡πâ‡∏≤‡∏á‡∏à‡πà‡∏≤‡∏¢‡∏™‡∏≥‡∏´‡∏£‡∏±‡∏ö‡πÄ‡∏Ñ‡∏™‡∏ó‡∏µ‡πà‡πÄ‡∏•‡∏∑‡∏≠‡∏Å';
     GOTO RESULT;
 END;
 
@@ -284,11 +284,11 @@ IF EXISTS
 )
 BEGIN
     SET @IsResult = 0;
-    SET @Msg = N'æ∫ TransferId ´È”®“°°“√ JOIN °√ÿ≥“µ√«® OrganizeWithHoldingTax';
+    SET @Msg = N'‡∏û‡∏ö TransferId ‡∏ã‡πâ‡∏≥‡∏à‡∏≤‡∏Å‡∏Å‡∏≤‡∏£ JOIN ‡∏Å‡∏£‡∏∏‡∏ì‡∏≤‡∏ï‡∏£‡∏ß‡∏à OrganizeWithHoldingTax';
     GOTO RESULT;
 END;
 -- =====================================================================
--- Query 06 : SELECT √«¡¬Õ¥µËÕ‚√ßæ¬“∫“≈ æ√ÈÕ¡·∂«µ—«·∑π
+-- Query 06 : SELECT ‡∏£‡∏ß‡∏°‡∏¢‡∏≠‡∏î‡∏ï‡πà‡∏≠‡πÇ‡∏£‡∏á‡∏û‡∏¢‡∏≤‡∏ö‡∏≤‡∏• ‡∏û‡∏£‡πâ‡∏≠‡∏°‡πÅ‡∏ñ‡∏ß‡∏ï‡∏±‡∏ß‡πÅ‡∏ó‡∏ô
 -- =====================================================================
 INSERT INTO @HospitalTotals
            (
@@ -375,27 +375,27 @@ LEFT JOIN (
 --FROM @HospitalTotals
 --ORDER BY HospitalId;
 
---  ”À√—∫ script ·∫∫√—πÀπ÷Ëß‚√ßæ¬“∫“≈ ‡≈◊Õ°„ÀÈÕ—µ‚π¡—µ‘∂È“¡’·§Ë°≈ÿË¡‡¥’¬«
+-- ‡∏™‡∏≥‡∏´‡∏£‡∏±‡∏ö script ‡πÅ‡∏ö‡∏ö‡∏£‡∏±‡∏ô‡∏´‡∏ô‡∏∂‡πà‡∏á‡πÇ‡∏£‡∏á‡∏û‡∏¢‡∏≤‡∏ö‡∏≤‡∏• ‡πÄ‡∏•‡∏∑‡∏≠‡∏Å‡πÉ‡∏´‡πâ‡∏≠‡∏±‡∏ï‡πÇ‡∏ô‡∏°‡∏±‡∏ï‡∏¥‡∏ñ‡πâ‡∏≤‡∏°‡∏µ‡πÅ‡∏Ñ‡πà‡∏Å‡∏•‡∏∏‡πà‡∏°‡πÄ‡∏î‡∏µ‡∏¢‡∏ß
 --IF @HospitalId IS NULL AND (SELECT COUNT(*) FROM @HospitalTotals) = 1
 --    SELECT @HospitalId = HospitalId FROM @HospitalTotals;
 
 --IF @HospitalId IS NULL
 --BEGIN
 --    SET @IsResult = 0;
---    SET @Msg = N'¡’À≈“¬‚√ßæ¬“∫“≈ „ÀÈ‡≈◊Õ° @HospitalId ®“° Query 06 ·≈–ª√–¡«≈º≈∑’≈–°≈ÿË¡';
+--    SET @Msg = N'‡∏°‡∏µ‡∏´‡∏•‡∏≤‡∏¢‡πÇ‡∏£‡∏á‡∏û‡∏¢‡∏≤‡∏ö‡∏≤‡∏• ‡πÉ‡∏´‡πâ‡πÄ‡∏•‡∏∑‡∏≠‡∏Å @HospitalId ‡∏à‡∏≤‡∏Å Query 06 ‡πÅ‡∏•‡∏∞‡∏õ‡∏£‡∏∞‡∏°‡∏ß‡∏•‡∏ú‡∏•‡∏ó‡∏µ‡∏•‡∏∞‡∏Å‡∏•‡∏∏‡πà‡∏°';
 --    GOTO RESULT;
 --END;
 
 --IF NOT EXISTS (SELECT 1 FROM @HospitalTotals WHERE HospitalId = @HospitalId)
 --BEGIN
 --    SET @IsResult = 0;
---    SET @Msg = N'@HospitalId ‰¡ËÕ¬ŸË„π√“¬°“√∑’Ë‡≈◊Õ°';
+--    SET @Msg = N'@HospitalId ‡πÑ‡∏°‡πà‡∏≠‡∏¢‡∏π‡πà‡πÉ‡∏ô‡∏£‡∏≤‡∏¢‡∏Å‡∏≤‡∏£‡∏ó‡∏µ‡πà‡πÄ‡∏•‡∏∑‡∏≠‡∏Å';
 --    GOTO RESULT;
 --END;
 -- =====================================================================
--- Query 07 : SELECT ∫—≠™’ ”À√—∫ client + SELECT °“√µ—Èß§Ë“®Ë“¬‚√ßæ¬“∫“≈
--- ∫—≠™’„™È raw SELECT ‡æ◊ËÕ„ÀÈ AE-enabled client ∂Õ¥√À— 
--- „ÀÈ client π”§Ë“‰ª bind Query 12; SQL ‰¡Ë¬È“¬ ciphertext ‰ª plaintext
+-- Query 07 : SELECT ‡∏ö‡∏±‡∏ç‡∏ä‡∏µ‡∏™‡∏≥‡∏´‡∏£‡∏±‡∏ö client + SELECT ‡∏Å‡∏≤‡∏£‡∏ï‡∏±‡πâ‡∏á‡∏Ñ‡πà‡∏≤‡∏à‡πà‡∏≤‡∏¢‡πÇ‡∏£‡∏á‡∏û‡∏¢‡∏≤‡∏ö‡∏≤‡∏•
+-- ‡∏ö‡∏±‡∏ç‡∏ä‡∏µ‡πÉ‡∏ä‡πâ raw SELECT ‡πÄ‡∏û‡∏∑‡πà‡∏≠‡πÉ‡∏´‡πâ AE-enabled client ‡∏ñ‡∏≠‡∏î‡∏£‡∏´‡∏±‡∏™
+-- ‡πÉ‡∏´‡πâ client ‡∏ô‡∏≥‡∏Ñ‡πà‡∏≤‡πÑ‡∏õ bind Query 12; SQL ‡πÑ‡∏°‡πà‡∏¢‡πâ‡∏≤‡∏¢ ciphertext ‡πÑ‡∏õ plaintext
 -- =====================================================================
 --SELECT o.OrganizeId AS HospitalId
 --      ,o.BankId
@@ -413,9 +413,9 @@ LEFT JOIN (
 --WHERE s.IsActive = 1
 --  AND s.HospitalId = @HospitalId
 --  AND s.HoldStatusId = 1;
--- ‰¡Ë¡’ ORDER BY ‡æ◊ËÕ§ß FirstOrDefault() ¢Õß config „π C#
+-- ‡πÑ‡∏°‡πà‡∏°‡∏µ ORDER BY ‡πÄ‡∏û‡∏∑‡πà‡∏≠‡∏Ñ‡∏á FirstOrDefault() ‡∏Ç‡∏≠‡∏á config ‡πÉ‡∏ô C#
 -- =================================================================
--- Query 08 : §”π«≥§Ë“À—« Payment ·≈– EstimatedDate
+-- Query 08 : ‡∏Ñ‡∏≥‡∏ô‡∏ß‡∏ì‡∏Ñ‡πà‡∏≤‡∏´‡∏±‡∏ß Payment ‡πÅ‡∏•‡∏∞ EstimatedDate
 -- =================================================================
 --SET @AutoPayDelayDays = NULL;
 --SELECT TOP (1) @AutoPayDelayDays = s.AutoPayDelayDays
@@ -427,7 +427,7 @@ LEFT JOIN (
 --IF @AutoPayDelayDays IS NULL
 --BEGIN
 --    SET @IsResult = 0;
---    SET @Msg = N'‰¡Ëæ∫ HospitalPaymentSetting ∑’Ë„™Èß“π‰¥È À√◊Õ AutoPayDelayDays ‡ªÁπ NULL';
+--    SET @Msg = N'‡πÑ‡∏°‡πà‡∏û‡∏ö HospitalPaymentSetting ‡∏ó‡∏µ‡πà‡πÉ‡∏ä‡πâ‡∏á‡∏≤‡∏ô‡πÑ‡∏î‡πâ ‡∏´‡∏£‡∏∑‡∏≠ AutoPayDelayDays ‡πÄ‡∏õ‡πá‡∏ô NULL';
 --    GOTO RESULT;
 --END;
 
@@ -441,7 +441,7 @@ LEFT JOIN (
 --IF @BillingDate IS NULL
 --BEGIN
 --    SET @IsResult = 0;
---    SET @Msg = N'BillingDate ‡ªÁπ NULL ‰¡Ë “¡“√∂§”π«≥ EstimatedDate ‰¥È';
+--    SET @Msg = N'BillingDate ‡πÄ‡∏õ‡πá‡∏ô NULL ‡πÑ‡∏°‡πà‡∏™‡∏≤‡∏°‡∏≤‡∏£‡∏ñ‡∏Ñ‡∏≥‡∏ô‡∏ß‡∏ì EstimatedDate ‡πÑ‡∏î‡πâ';
 --    GOTO RESULT;
 --END;
 
@@ -459,8 +459,8 @@ SET @D2 = GETDATE();
 DECLARE @TotalRow INT = (SELECT MAX(rwId) FROM @HospitalTotals);
 
 -- =====================================================================
--- Query 10 : EXEC  √È“ß PaymentCode ¢Õß°≈ÿË¡ (¿“¬„π transaction)
--- ≈”¥—∫æ“√“¡‘‡µÕ√ÏÕÈ“ßÕ‘ß SQL ·π∫; µ√«® Query 01 °ËÕπ„™Èß“π
+-- Query 10 : EXEC ‡∏™‡∏£‡πâ‡∏≤‡∏á PaymentCode ‡∏Ç‡∏≠‡∏á‡∏Å‡∏•‡∏∏‡πà‡∏° (‡∏†‡∏≤‡∏¢‡πÉ‡∏ô transaction)
+-- ‡∏•‡∏≥‡∏î‡∏±‡∏ö‡∏û‡∏≤‡∏£‡∏≤‡∏°‡∏¥‡πÄ‡∏ï‡∏≠‡∏£‡πå‡∏≠‡πâ‡∏≤‡∏á‡∏≠‡∏¥‡∏á SQL ‡πÅ‡∏ô‡∏ö; ‡∏ï‡∏£‡∏ß‡∏à Query 01 ‡∏Å‡πà‡∏≠‡∏ô‡πÉ‡∏ä‡πâ‡∏á‡∏≤‡∏ô
 -- =====================================================================
 --EXEC [process].[usp_GenerateCodeBE_FromTo] 'PMH', 8, @PaymentCode OUTPUT;
 
@@ -469,8 +469,8 @@ BEGIN TRY
 
 /* TODO Insert,Update,Truncate Query Here */
 -- =====================================================================
--- Query 09 : UPDATE ®Õß√“¬°“√; À¬ÿ¥∑—π∑’∂È“æ∫ºŸÈ„™È§πÕ◊Ëπ
--- µ√«®·≈–®Õß¿“¬„π transaction ‡¥’¬«°—∫ INSERT/UPDATE ¥È“π≈Ë“ß
+-- Query 09 : UPDATE ‡∏à‡∏≠‡∏á‡∏£‡∏≤‡∏¢‡∏Å‡∏≤‡∏£; ‡∏´‡∏¢‡∏∏‡∏î‡∏ó‡∏±‡∏ô‡∏ó‡∏µ‡∏ñ‡πâ‡∏≤‡∏û‡∏ö‡∏ú‡∏π‡πâ‡πÉ‡∏ä‡πâ‡∏Ñ‡∏ô‡∏≠‡∏∑‡πà‡∏ô
+-- ‡∏ï‡∏£‡∏ß‡∏à‡πÅ‡∏•‡∏∞‡∏à‡∏≠‡∏á‡∏†‡∏≤‡∏¢‡πÉ‡∏ô transaction ‡πÄ‡∏î‡∏µ‡∏¢‡∏ß‡∏Å‡∏±‡∏ö INSERT/UPDATE ‡∏î‡πâ‡∏≤‡∏ô‡∏•‡πà‡∏≤‡∏á
 -- =====================================================================
     IF EXISTS
     (
@@ -484,7 +484,7 @@ BEGIN TRY
     )
         BEGIN
             SET @IsResult = 0;
-            SET @Msg = N'¡’√“¬°“√∂Ÿ° √È“ß‚¥¬ºŸÈ„™Èß“πÕ◊Ëπ·≈È«';
+            SET @Msg = N'‡∏°‡∏µ‡∏£‡∏≤‡∏¢‡∏Å‡∏≤‡∏£‡∏ñ‡∏π‡∏Å‡∏™‡∏£‡πâ‡∏≤‡∏á‡πÇ‡∏î‡∏¢‡∏ú‡∏π‡πâ‡πÉ‡∏ä‡πâ‡∏á‡∏≤‡∏ô‡∏≠‡∏∑‡πà‡∏ô‡πÅ‡∏•‡πâ‡∏ß';
             IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
             GOTO RESULT;
         END;
@@ -499,7 +499,7 @@ BEGIN TRY
 
 --SELECT @HospitalId AS HospitalId, @PaymentId AS PaymentId, @PaymentCode AS PaymentCode;
 -- =================================================================
-    -- Query 11 : INSERT CasePayable Àπ÷Ëß·∂«µËÕ√“¬°“√
+    -- Query 11 : INSERT CasePayable ‡∏´‡∏ô‡∏∂‡πà‡∏á‡πÅ‡∏ñ‡∏ß‡∏ï‡πà‡∏≠‡∏£‡∏≤‡∏¢‡∏Å‡∏≤‡∏£
     -- =================================================================
     --INSERT INTO [process].[CasePayable]
     --           ([CasePayableId]
@@ -566,7 +566,7 @@ BEGIN TRY
         FROM @HospitalTotals AS p;   
 
     -- =================================================================
-        -- Query 13 : INSERT PaymentItem ÕÈ“ß CasePayableId ®“°·∂«‡¥’¬«°—π
+        -- Query 13 : INSERT PaymentItem ‡∏≠‡πâ‡∏≤‡∏á CasePayableId ‡∏à‡∏≤‡∏Å‡πÅ‡∏ñ‡∏ß‡πÄ‡∏î‡∏µ‡∏¢‡∏ß‡∏Å‡∏±‡∏ô
         -- =================================================================
         --INSERT INTO [finance].[PaymentItem]
         --           ([PaymentItemId]
@@ -603,7 +603,7 @@ BEGIN TRY
     END
 
 -- =================================================================
-    -- Query 14 : UPDATE √“¬°“√∑’Ë √È“ß Payment  ”‡√Á®„π°≈ÿË¡π’È
+    -- Query 14 : UPDATE ‡∏£‡∏≤‡∏¢‡∏Å‡∏≤‡∏£‡∏ó‡∏µ‡πà‡∏™‡∏£‡πâ‡∏≤‡∏á Payment ‡∏™‡∏≥‡πÄ‡∏£‡πá‡∏à‡πÉ‡∏ô‡∏Å‡∏•‡∏∏‡πà‡∏°‡∏ô‡∏µ‡πâ
     -- =================================================================
     SELECT b.IsGroup
     --UPDATE b
@@ -616,10 +616,10 @@ BEGIN TRY
             ON h.BillingPendingTransferId = b.BillingPendingTransferId
     WHERE b.IsActive = 1
     -- =================================================================
-    -- ®∫ transaction ·≈–µ—Èßº≈≈—æ∏Ïµ“¡ template
+    -- ‡∏à‡∏ö transaction ‡πÅ‡∏•‡∏∞‡∏ï‡∏±‡πâ‡∏á‡∏ú‡∏•‡∏•‡∏±‡∏û‡∏ò‡πå‡∏ï‡∏≤‡∏° template
     -- =================================================================
     SET @IsResult = 1;
-    SET @Msg = N'∫—π∑÷°  ”‡√Á®';
+    SET @Msg = N'‡∏ö‡∏±‡∏ô‡∏ó‡∏∂‡∏Å ‡∏™‡∏≥‡πÄ‡∏£‡πá‡∏à';
     COMMIT TRANSACTION;
 END TRY
 BEGIN CATCH
@@ -644,12 +644,12 @@ END;
 IF @IsResult = 1
 BEGIN
 -- =====================================================================
--- Query 15 : SELECT º≈≈—æ∏Ï response  ”À√—∫‚√ßæ¬“∫“≈∑’Ëª√–¡«≈º≈
--- §◊π√“¬≈–‡Õ’¬¥‡©æ“–‡¡◊ËÕ COMMIT  ”‡√Á®; Result À≈—°Õ¬ŸË∑’Ë RESULT ¥È“π∫π
+-- Query 15 : SELECT ‡∏ú‡∏•‡∏•‡∏±‡∏û‡∏ò‡πå response ‡∏™‡∏≥‡∏´‡∏£‡∏±‡∏ö‡πÇ‡∏£‡∏á‡∏û‡∏¢‡∏≤‡∏ö‡∏≤‡∏•‡∏ó‡∏µ‡πà‡∏õ‡∏£‡∏∞‡∏°‡∏ß‡∏•‡∏ú‡∏•
+-- ‡∏Ñ‡∏∑‡∏ô‡∏£‡∏≤‡∏¢‡∏•‡∏∞‡πÄ‡∏≠‡∏µ‡∏¢‡∏î‡πÄ‡∏â‡∏û‡∏≤‡∏∞‡πÄ‡∏°‡∏∑‡πà‡∏≠ COMMIT ‡∏™‡∏≥‡πÄ‡∏£‡πá‡∏à; Result ‡∏´‡∏•‡∏±‡∏Å‡∏≠‡∏¢‡∏π‡πà‡∏ó‡∏µ‡πà RESULT ‡∏î‡πâ‡∏≤‡∏ô‡∏ö‡∏ô
 -- =====================================================================
 SELECT @IsResult AS IsSuccess
       ,1 AS ItemCount
-      ,N'∑”√“¬°“√ ”‡√Á®' AS [Message]
+      ,N'‡∏ó‡∏≥‡∏£‡∏≤‡∏¢‡∏Å‡∏≤‡∏£‡∏™‡∏≥‡πÄ‡∏£‡πá‡∏à' AS [Message]
       ,CAST(NULL AS UNIQUEIDENTIFIER) AS PayListHeaderId
       ,CAST(NULL AS UNIQUEIDENTIFIER) AS RefTransactionId
       ,@GrossTotal AS TotalNetPaidAmount
@@ -664,7 +664,7 @@ SELECT @IsResult AS IsSuccess
       ,CAST(NULL AS DATETIME2) AS PaymentDate
       ,h.CaseId
       ,2 AS PaymentStatusId
-      ,N'·®Èß°“√‚Õπ‡ß‘π' AS PaymentStatusNameTH
+      ,N'‡πÅ‡∏à‡πâ‡∏á‡∏Å‡∏≤‡∏£‡πÇ‡∏≠‡∏ô‡πÄ‡∏á‡∏¥‡∏ô' AS PaymentStatusNameTH
       ,@UserId AS UserId
       ,@CurrentUserName AS UserName
       ,@EstimatedDate AS EstimateDate
