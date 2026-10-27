@@ -16,7 +16,7 @@ GO
 */
 -- Description:	Process การโอนเพิ่ม
 -- =============================================
-CREATE PROCEDURE [finance].[usp_AdditionalTransfer_Core_Insert]  
+ALTER PROCEDURE [finance].[usp_AdditionalTransfer_Core_Insert]  
 /* Add the parameters for the stored procedure here
  comment if not receive parameter*/
 			@AdjustmentReasonId INT
@@ -66,7 +66,6 @@ BEGIN
 /* TODO Select Query Here*/
 /* Setup Data*/
     DECLARE @CaseAdjustmentId UNIQUEIDENTIFIER;
-    DECLARE @CasePayable UNIQUEIDENTIFIER;
 
     DECLARE
          @ToBankId             INT 
@@ -114,7 +113,6 @@ BEGIN
     AND [case].CaseId = @CaseId;
 
     SET @CaseAdjustmentId = NEWID();
-    SET @CasePayable = NEWID();
     SELECT @CountValidate = COUNT(CaseId) FROM #Tmp
 
 /* Validate Data */
@@ -122,7 +120,7 @@ BEGIN
 	BEGIN
 		SET @IsResult = 0
         SET @Msg = N'ไม่พบข้อมูล'
-        SET @CasePayable = NULL
+        SET @CaseAdjustmentId = NULL
 		GOTO RESULT;
 	END;
 
@@ -334,7 +332,7 @@ comment this part if no return result */
     SELECT @IsResult IsResult
 		    ,@Result Result
 		    ,@Msg	 Msg
-            ,@CasePayable CasePayableId;
+            ,@CaseAdjustmentId CaseAdjustmentId;
 
 END
 GO

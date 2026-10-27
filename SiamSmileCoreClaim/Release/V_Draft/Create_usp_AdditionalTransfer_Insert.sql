@@ -16,7 +16,7 @@ GO
 */
 -- Description:	การโอนเพิ่ม Wrapper
 -- =============================================
-CREATE PROCEDURE [finance].[usp_AdditionalTransfer_Insert]  
+ALTER PROCEDURE [finance].[usp_AdditionalTransfer_Insert]  
 /* Add the parameters for the stored procedure here
  comment if not receive parameter*/
 			@AdjustmentReasonId INT
@@ -53,7 +53,7 @@ DECLARE @Result TABLE
     IsResult BIT,
     Result VARCHAR(100),
     Msg NVARCHAR(500),
-    CasePayableId UNIQUEIDENTIFIER
+    CaseAdjustmentId UNIQUEIDENTIFIER
 );
 
 INSERT INTO @Result
@@ -61,7 +61,7 @@ INSERT INTO @Result
     IsResult,
     Result,
     Msg,
-    CasePayableId
+    CaseAdjustmentId
 )
 EXEC [finance].[usp_AdditionalTransfer_Core_Insert]
      @AdjustmentReasonId,
@@ -74,7 +74,7 @@ SELECT
     IsResult,
     Result,
     Msg,
-    CasePayableId
+    CaseAdjustmentId
 FROM @Result;
 
 END

@@ -1,10 +1,8 @@
 USE [CoreClaim]
 GO
-
-/****** Object:  StoredProcedure [finance].[usp_CasePayable_Insert]    Script Date: 9/23/2026 10:28:59 AM ******/
+/****** Object:  StoredProcedure [finance].[usp_CasePayable_Insert]    Script Date: 10/27/2026 10:59:25 AM ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
 
@@ -17,6 +15,7 @@ ALTER PROCEDURE [finance].[usp_CasePayable_Insert]
 	-- Add the parameters for the stored procedure here
 	 @CaseId UNIQUEIDENTIFIER 
      ,@CaseAdjudicationId UNIQUEIDENTIFIER
+     ,@CaseAdjustmentId UNIQUEIDENTIFIER
 	 ,@TotalPaidAmount DECIMAL(18,2)
      ,@UserId INT
 AS
@@ -36,7 +35,9 @@ BEGIN
         ,@ToBankAccountName VARCHAR(200)    
         ,@ToBankAccountNo   VARCHAR(50)  
         ,@PhoneNumber       VARCHAR(50)
-        ,@CasePayableId     UNIQUEIDENTIFIER;
+        ,@CasePayableId     UNIQUEIDENTIFIER
+        ,@BeneficiaryId     UNIQUEIDENTIFIER
+        ;
 
     SET @Msg = '';
     SET @Result = '';
@@ -80,6 +81,7 @@ BEGIN
         ,@ToBankAccountNo    = bfc.BankAccountNo
         ,@ToBankAccountName  = bfc.BankAccountName
         ,@PhoneNumber        = bfc.PhoneNo
+        ,@BeneficiaryId      = bfc.BeneficiaryId
         FROM agent.Beneficiary bfc
         LEFT JOIN 
         (
@@ -144,12 +146,14 @@ BEGIN
                            ,[CreatedByUserId]
                            ,[CreatedDate]
                            ,[UpdatedByUserId]
-                           ,[UpdatedDate])
+                           ,[UpdatedDate]
+                           ,[CasePayableRequestId]
+                           ,[BeneficiaryId])
                 SELECT
                  @CasePayableId        [CasePayableId]
                  ,CaseId               CaseId
                  ,CaseAdjudicationId   CaseAdjudicationId
-                 ,NULL                 [CaseAdjustmentId]
+                 ,@CaseAdjustmentId    [CaseAdjustmentId]
                  ,PayableCategoryId    PayableCategoryId
                  ,2                    [PayableStatusId]
                  ,@TotalPaidAmount     [PayableAmount]
@@ -164,6 +168,8 @@ BEGIN
                  ,@D2                  [CreatedDate]
                  ,@UserId              [UpdatedByUserId]
                  ,@D2                  [UpdatedDate]
+                 ,NEWID()              [CasePayableRequestId]
+                 ,@BeneficiaryId       [BeneficiaryId]
                 FROM #Tmp
 
                 SET @IsResult = 1;
@@ -197,5 +203,3 @@ BEGIN
     , @ToBankAccountName ToBankAccountName
     , @ToBankAccountNo ToBankAccountNo;   
 END
-GO
-
