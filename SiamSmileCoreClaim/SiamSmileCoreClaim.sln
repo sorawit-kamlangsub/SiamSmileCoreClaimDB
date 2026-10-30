@@ -18,6 +18,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "V_Draft", "V_Draft", "{61DA
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Finance", "Finance", "{A389E4F8-A6AD-4D79-BD86-B0CD429F9AD9}"
+	ProjectSection(SolutionItems) = preProject
+		Finance\FindClaimTransferedWithCoverageTypeId.sql = Finance\FindClaimTransferedWithCoverageTypeId.sql
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Procedures", "Procedures", "{3D6AC054-DA18-417E-BD98-58EA9364D8B3}"
 	ProjectSection(SolutionItems) = preProject
@@ -57,7 +60,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E2F11C40-31B2-F6BF-EDF1-F8536154594A}.Default|Default.ActiveCfg = Default
-		{F7463F46-EBF1-439C-956E-62C7CD6649AC}.Default|Default.ActiveCfg = Default
+		{FDF0D8DC-6349-4B61-A779-CEBED4128DF9}.Default|Default.ActiveCfg = Default
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

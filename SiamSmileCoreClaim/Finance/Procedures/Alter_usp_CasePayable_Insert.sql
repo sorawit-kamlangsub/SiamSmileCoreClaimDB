@@ -18,6 +18,7 @@ ALTER PROCEDURE [finance].[usp_CasePayable_Insert]
      ,@CaseAdjustmentId UNIQUEIDENTIFIER
 	 ,@TotalPaidAmount DECIMAL(18,2)
      ,@UserId INT
+     ,@BeneficiaryId     UNIQUEIDENTIFIER
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -36,7 +37,6 @@ BEGIN
         ,@ToBankAccountNo   VARCHAR(50)  
         ,@PhoneNumber       VARCHAR(50)
         ,@CasePayableId     UNIQUEIDENTIFIER
-        ,@BeneficiaryId     UNIQUEIDENTIFIER
         ;
 
     SET @Msg = '';
@@ -93,7 +93,8 @@ BEGIN
             AND OrganizeTypeId = 5
         ) org
             ON bfc.BankId = org.OrganizeId
-        WHERE bfc.CaseId = @CaseId;
+        WHERE bfc.CaseId = @CaseId
+        AND bfc.BeneficiaryId = @BeneficiaryId;
         
         SELECT
          cc.CaseId
@@ -104,8 +105,6 @@ BEGIN
         FROM core.[Case] cc
         INNER JOIN core.Claim cl
             ON cc.ClaimId = cl.ClaimId
-        INNER JOIN agent.Beneficiary bfc
-            ON cc.CaseId = bfc.CaseId
         INNER JOIN process.CaseAdjudication adju
             ON cc.CaseId = adju.CaseId
         LEFT JOIN @MappingCategory pct
