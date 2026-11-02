@@ -12,16 +12,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "V_Draft", "V_Draft", "{61DA
 		Release\V_Draft\Create_usp_AdditionalTransferMonitor_Select.sql = Release\V_Draft\Create_usp_AdditionalTransferMonitor_Select.sql
 		Release\V_Draft\Create_usp_AdditionalTransfer_Core_Insert.sql = Release\V_Draft\Create_usp_AdditionalTransfer_Core_Insert.sql
 		Release\V_Draft\Create_usp_AdditionalTransfer_Insert.sql = Release\V_Draft\Create_usp_AdditionalTransfer_Insert.sql
+		Release\V_Draft\Create_usp_CasePayable_Insert.sql = Release\V_Draft\Create_usp_CasePayable_Insert.sql
 		Release\V_Draft\Create_usp_FailedPayTransferTransaction_Select.sql = Release\V_Draft\Create_usp_FailedPayTransferTransaction_Select.sql
 		Release\V_Draft\Create_usp_InquiryMonitor_Select.sql = Release\V_Draft\Create_usp_InquiryMonitor_Select.sql
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Finance", "Finance", "{A389E4F8-A6AD-4D79-BD86-B0CD429F9AD9}"
+	ProjectSection(SolutionItems) = preProject
+		Finance\FindClaimTransferedWithCoverageTypeId.sql = Finance\FindClaimTransferedWithCoverageTypeId.sql
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Procedures", "Procedures", "{3D6AC054-DA18-417E-BD98-58EA9364D8B3}"
 	ProjectSection(SolutionItems) = preProject
 		Finance\Procedures\Alter_usp_AdditionalTransferMonitor_Select.sql = Finance\Procedures\Alter_usp_AdditionalTransferMonitor_Select.sql
 		Finance\Procedures\Alter_usp_AdditionalTransfer_Insert.sql = Finance\Procedures\Alter_usp_AdditionalTransfer_Insert.sql
+		Finance\Procedures\Alter_usp_CasePayable_Insert.sql = Finance\Procedures\Alter_usp_CasePayable_Insert.sql
 		Finance\Procedures\Alter_usp_FailedPayTransferTransaction_Select.sql = Finance\Procedures\Alter_usp_FailedPayTransferTransaction_Select.sql
 		Finance\Procedures\Alter_usp_InquiryMonitor_Select.sql = Finance\Procedures\Alter_usp_InquiryMonitor_Select.sql
 	EndProjectSection
@@ -36,13 +41,26 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AdditionalTransfer", "Addit
 		Finance\AdditionalTransfer\InsertCaseAdjustment.sql = Finance\AdditionalTransfer\InsertCaseAdjustment.sql
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Opencode-query", "Opencode-query", "{75C9F54D-1C75-4085-8888-65CB46A824C5}"
+	ProjectSection(SolutionItems) = preProject
+		Opencode-query\SelectBillingApproveReview.sql = Opencode-query\SelectBillingApproveReview.sql
+		Opencode-query\SelectBillingMonitor.sql = Opencode-query\SelectBillingMonitor.sql
+		Opencode-query\SelectPaymentHcg.sql = Opencode-query\SelectPaymentHcg.sql
+		Opencode-query\SelectTransferDetail.sql = Opencode-query\SelectTransferDetail.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InsertQuery", "InsertQuery", "{B1C5EE65-831A-4ECF-8EBF-25475795790B}"
+	ProjectSection(SolutionItems) = preProject
+		InsertQuery\InsertHospitalPayment.sql = InsertQuery\InsertHospitalPayment.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Default|Default = Default|Default
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E2F11C40-31B2-F6BF-EDF1-F8536154594A}.Default|Default.ActiveCfg = Default
-		{CB7E706A-58CA-473A-82B4-DCCC241DD962}.Default|Default.ActiveCfg = Default
+		{FDF0D8DC-6349-4B61-A779-CEBED4128DF9}.Default|Default.ActiveCfg = Default
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,6 +70,7 @@ Global
 		{3D6AC054-DA18-417E-BD98-58EA9364D8B3} = {A389E4F8-A6AD-4D79-BD86-B0CD429F9AD9}
 		{DCE99821-D307-4778-ABA3-E84CBF26EB15} = {A389E4F8-A6AD-4D79-BD86-B0CD429F9AD9}
 		{9AF31149-F0D1-411B-A68E-EE1A90E5B852} = {A389E4F8-A6AD-4D79-BD86-B0CD429F9AD9}
+		{B1C5EE65-831A-4ECF-8EBF-25475795790B} = {A389E4F8-A6AD-4D79-BD86-B0CD429F9AD9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {989B1D21-3F78-4472-AFD4-D0EE3206C4A0}

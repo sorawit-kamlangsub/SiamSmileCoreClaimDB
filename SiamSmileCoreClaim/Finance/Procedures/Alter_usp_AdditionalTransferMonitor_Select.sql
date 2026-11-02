@@ -1,6 +1,6 @@
 USE [CoreClaim]
 GO
-/****** Object:  StoredProcedure [finance].[usp_AdditionalTransferMonitor_Select]    Script Date: 9/4/2026 3:49:20 PM ******/
+/****** Object:  StoredProcedure [finance].[usp_AdditionalTransferMonitor_Select]    Script Date: 10/6/2026 1:38:29 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -49,6 +49,7 @@ BEGIN
 	 ,COUNT(cc.CaseId) OVER()   TotalCount
 	 ,pm.PaymentStatusId
 	 ,cpa.CasePayableId
+	 ,pm.PaymentId
 	FROM finance.Payment pm
 	INNER JOIN finance.PaymentItem pmi
 		ON pm.PaymentId = pmi.PaymentId
@@ -92,11 +93,9 @@ BEGIN
 	AND cc.IsActive = 1
 	AND cl.IsActive = 1
 	AND pm.PaymentTypeId = 4
-	AND pm.PaymentStatusId IN (2,5)
-	AND (
-	  @BranchId IS NULL 
-	  OR @PaymentStatusId IS NULL
-	  OR pm.PaymentStatusId = @PaymentStatusId
+	AND pm.PaymentStatusId = @PaymentStatusId
+	AND(@BranchId IS NULL
+      OR cl.CreatedByBranchId = @BranchId
 	)
 
 	ORDER BY 
