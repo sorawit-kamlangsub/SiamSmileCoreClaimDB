@@ -16,7 +16,7 @@ GO
 */
 -- Description:	Process การโอนเพิ่ม
 -- =============================================
-ALTER PROCEDURE [finance].[usp_AdditionalTransfer_Core_Insert]  
+CREATE PROCEDURE [finance].[usp_AdditionalTransfer_Core_Insert]  
 /* Add the parameters for the stored procedure here
  comment if not receive parameter*/
 			@AdjustmentReasonId INT
@@ -81,8 +81,7 @@ BEGIN
     WHERE payable.CaseId = @CaseId;
 
     SELECT DISTINCT
-    payable.PayableCategoryId
-    ,payable.PayeeTypeId
+    payable.PayeeTypeId
     ,claim.ClaimId
     ,adju.*
     INTO #Tmp
