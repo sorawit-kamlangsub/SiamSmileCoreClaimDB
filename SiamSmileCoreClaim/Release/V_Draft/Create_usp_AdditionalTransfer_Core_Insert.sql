@@ -16,7 +16,7 @@ GO
 */
 -- Description:	Process การโอนเพิ่ม
 -- =============================================
-CREATE PROCEDURE [finance].[usp_AdditionalTransfer_Core_Insert]  
+ALTER PROCEDURE [finance].[usp_AdditionalTransfer_Core_Insert]  
 /* Add the parameters for the stored procedure here
  comment if not receive parameter*/
 			@AdjustmentReasonId INT
@@ -275,31 +275,31 @@ BEGIN TRY
     -- ,@D2                   [UpdatedDate]
     --FROM #Tmp
 
-    --INSERT INTO [transaction].[TransactionLog]
-    --           ([TransactionLogId]
-    --           ,[ClaimId]
-    --           ,[CaseId]
-    --           ,[TransactionLogTypeId]
-    --           ,[ReferenceId]
-    --           ,[IsActive]
-    --           ,[Remark]
-    --           ,[CreatedByUserId]
-    --           ,[CreatedDate]
-    --           ,[UpdatedByUserId]
-    --           ,[UpdatedDate])
-    --SELECT
-    -- NEWID()    [TransactionLogId]
-    -- ,ClaimId
-    -- ,@CaseId   [CaseId]
-    -- ,10        [TransactionLogTypeId]
-    -- ,NULL      [ReferenceId]
-    -- ,1         [IsActive]
-    -- ,NULL      [Remark]
-    -- ,@UserId   [CreatedByUserId]
-    -- ,@D2       [CreatedDate]
-    -- ,@UserId   [UpdatedByUserId]
-    -- ,@D2       [UpdatedDate]
-    --FROM #Tmp
+    INSERT INTO [transaction].[TransactionLog]
+               ([TransactionLogId]
+               ,[ClaimId]
+               ,[CaseId]
+               ,[TransactionLogTypeId]
+               ,[ReferenceId]
+               ,[IsActive]
+               ,[Remark]
+               ,[CreatedByUserId]
+               ,[CreatedDate]
+               ,[UpdatedByUserId]
+               ,[UpdatedDate])
+    SELECT
+     NEWID()    [TransactionLogId]
+     ,ClaimId
+     ,@CaseId   [CaseId]
+     ,10        [TransactionLogTypeId]
+     ,NULL      [ReferenceId]
+     ,1         [IsActive]
+     ,NULL      [Remark]
+     ,@UserId   [CreatedByUserId]
+     ,@D2       [CreatedDate]
+     ,@UserId   [UpdatedByUserId]
+     ,@D2       [UpdatedDate]
+    FROM #Tmp
 
 	SET @IsResult	= 1;
 	SET @Msg		= N'บันทึก สำเร็จ';
