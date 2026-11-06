@@ -81,8 +81,7 @@ BEGIN
     WHERE payable.CaseId = @CaseId;
 
     SELECT DISTINCT
-    payable.PayableCategoryId
-    ,payable.PayeeTypeId
+    payable.PayeeTypeId
     ,claim.ClaimId
     ,adju.*
     INTO #Tmp
@@ -276,31 +275,31 @@ BEGIN TRY
     -- ,@D2                   [UpdatedDate]
     --FROM #Tmp
 
-    --INSERT INTO [transaction].[TransactionLog]
-    --           ([TransactionLogId]
-    --           ,[ClaimId]
-    --           ,[CaseId]
-    --           ,[TransactionLogTypeId]
-    --           ,[ReferenceId]
-    --           ,[IsActive]
-    --           ,[Remark]
-    --           ,[CreatedByUserId]
-    --           ,[CreatedDate]
-    --           ,[UpdatedByUserId]
-    --           ,[UpdatedDate])
-    --SELECT
-    -- NEWID()    [TransactionLogId]
-    -- ,ClaimId
-    -- ,@CaseId   [CaseId]
-    -- ,10        [TransactionLogTypeId]
-    -- ,NULL      [ReferenceId]
-    -- ,1         [IsActive]
-    -- ,NULL      [Remark]
-    -- ,@UserId   [CreatedByUserId]
-    -- ,@D2       [CreatedDate]
-    -- ,@UserId   [UpdatedByUserId]
-    -- ,@D2       [UpdatedDate]
-    --FROM #Tmp
+    INSERT INTO [transaction].[TransactionLog]
+               ([TransactionLogId]
+               ,[ClaimId]
+               ,[CaseId]
+               ,[TransactionLogTypeId]
+               ,[ReferenceId]
+               ,[IsActive]
+               ,[Remark]
+               ,[CreatedByUserId]
+               ,[CreatedDate]
+               ,[UpdatedByUserId]
+               ,[UpdatedDate])
+    SELECT
+     NEWID()    [TransactionLogId]
+     ,ClaimId
+     ,@CaseId   [CaseId]
+     ,10        [TransactionLogTypeId]
+     ,NULL      [ReferenceId]
+     ,1         [IsActive]
+     ,NULL      [Remark]
+     ,@UserId   [CreatedByUserId]
+     ,@D2       [CreatedDate]
+     ,@UserId   [UpdatedByUserId]
+     ,@D2       [UpdatedDate]
+    FROM #Tmp
 
 	SET @IsResult	= 1;
 	SET @Msg		= N'บันทึก สำเร็จ';
