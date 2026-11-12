@@ -16,11 +16,18 @@ GO
 */
 -- Description:	Process การโอนเพิ่ม
 -- =============================================
-ALTER PROCEDURE [finance].[usp_AdditionalTransfer_Core_Insert]  
+ALTER PROCEDURE [finance].[usp_AdditionalTransfer_Insert]
 /* Add the parameters for the stored procedure here
  comment if not receive parameter*/
 			@AdjustmentReasonId INT
-            ,@TotalNetPaidAmount DECIMAL(16,2)
+            ,@CaseAdjudicationId UNIQUEIDENTIFIER
+            ,@InputToStandardMappingId INT
+            ,@StandardMedicalExpenseId INT
+            ,@StandardMedicalExpenseBenefitId INT
+            ,@Quantity INT
+            ,@PerUnit INT
+            ,@MedicalTypeId INT
+            ,@NetPaidAmount DECIMAL(16,2)
             ,@CaseId UNIQUEIDENTIFIER
             ,@UserId INT
             ,@Remark NVARCHAR(500)
@@ -65,143 +72,96 @@ BEGIN
 
 /* TODO Select Query Here*/
 /* Setup Data*/
+    DECLARE @CaseItemId UNIQUEIDENTIFIER;
     DECLARE @CaseAdjustmentId UNIQUEIDENTIFIER;
 
-    DECLARE
-         @ToBankId             INT 
-         ,@ToBankName           VARCHAR(50)
-         ,@ToBankAccountNo      VARCHAR(50)
-         ,@CountValidate        INT ;
-
-    SELECT 
-    @ToBankId            = payable.ToBankId
-    ,@ToBankName         = payable.ToBankName
-    ,@ToBankAccountNo    = payable.ToBankAccountNo
-    FROM [process].CasePayable payable
-    WHERE payable.CaseId = @CaseId;
-
-    SELECT DISTINCT
-    payable.PayeeTypeId
-    ,claim.ClaimId
-    ,adju.*
-    INTO #Tmp
-    FROM core.[Case] [case]
-    INNER JOIN core.Claim claim
-        ON [case].ClaimId = claim.ClaimId
-    INNER JOIN [process].CasePayable payable
-        ON [case].CaseId = payable.CaseId
-    INNER JOIN finance.PaymentItem payItem
-        ON payable.CasePayableId = payItem.CasePayableId
-    INNER JOIN finance.Payment pay
-        ON payItem.PaymentId = pay.PaymentId
-    INNER JOIN 
-    (
-        SELECT 
-         adju.*
-         ,ROW_NUMBER() OVER (PARTITION BY adju.CaseId ORDER BY adju.VersionNo DESC) rwId
-        FROM process.CaseAdjudication adju
-    ) adju
-        ON [case].CaseId = adju.CaseId
-    WHERE claim.IsActive = 1
-    AND [case].IsActive = 1
-    AND payable.IsActive = 1
-    AND payItem.IsActive = 1
-    AND pay.IsActive = 1
-    AND pay.PaymentStatusId = 3
-    AND adju.rwId = 1
-    AND [case].CaseId = @CaseId;
-
+    SET @CaseItemId = NEWID();
     SET @CaseAdjustmentId = NEWID();
-    SELECT @CountValidate = COUNT(CaseId) FROM #Tmp
-
-/* Validate Data */
-	IF @CountValidate IS NULL OR @CountValidate = 0
-	BEGIN
-		SET @IsResult = 0
-        SET @Msg = N'ไม่พบข้อมูล'
-        SET @CaseAdjustmentId = NULL
-		GOTO RESULT;
-	END;
 
 BEGIN TRY
 	BEGIN TRANSACTION
 
-    --UPDATE [process].[CaseAdjudication]
-    --    SET UpdatedByUserId = @UserId
-    --        ,UpdatedDate = @D2
-    --        ,IsLatest = 0
-    --FROM [process].[CaseAdjudication]
-    --WHERE CaseId = @CaseId      
-    
-    --INSERT INTO [process].[CaseAdjudication]
-    --           ([CaseAdjudicationId]
-    --           ,[CaseId]
-    --           ,[VersionNo]
-    --           ,[DecisionId]
-    --           ,[DecisionDate]
-    --           ,[ApprovedAdmissionDate]
-    --           ,[ApprovedAdmissionTime]
-    --           ,[ApprovedDischargeDate]
-    --           ,[ApprovedDischargeTime]
-    --           ,[CoveredAmount]
-    --           ,[NonCoveredAmount]
-    --           ,[CompensateAmount]
-    --           ,[ApprovedMedicalAmount]
-    --           ,[ApprovedCompensateAmount]
-    --           ,[PatientPayAmount]
-    --           ,[IsExgratia]
-    --           ,[ExgratiaAmount]
-    --           ,[DeductibleAmount]
-    --           ,[CoPayAmount]
-    --           ,[CoInsuranceAmount]
-    --           ,[RejectReasonId]
-    --           ,[RejectDate]
-    --           ,[IsLatest]
-    --           ,[ApprovedIPDDayCount]
-    --           ,[ApprovedICUDayCount]
-    --           ,[DecisionResonId]
-    --           ,[DecisionRemark]
-    --           ,[Remark]
-    --           ,[IsActive]
-    --           ,[CreatedByUserId]
-    --           ,[CreatedDate]
-    --           ,[UpdatedByUserId]
-    --           ,[UpdatedDate])  
-    --SELECT 
-    --      NEWID()                                           [CaseAdjudicationId]
-    --     ,@CaseId                                           [CaseId]
-    --     ,t.[VersionNo] + 1                                 [VersionNo]
-    --     ,t.[DecisionId]
-    --     ,t.[DecisionDate]
-    --     ,t.[ApprovedAdmissionDate]
-    --     ,t.[ApprovedAdmissionTime]
-    --     ,t.[ApprovedDischargeDate]
-    --     ,t.[ApprovedDischargeTime]
-    --     ,t.[CoveredAmount]
-    --     ,t.[NonCoveredAmount]
-    --     ,0                                                 [CompensateAmount]
-    --     ,0                                                 [ApprovedMedicalAmount]
-    --     ,0                                                 [ApprovedCompensateAmount]
-    --     ,t.[PatientPayAmount]
-    --     ,t.[IsExgratia]
-    --     ,t.[ExgratiaAmount]
-    --     ,t.[DeductibleAmount]
-    --     ,t.[CoPayAmount]
-    --     ,t.[CoInsuranceAmount]
-    --     ,t.[RejectReasonId]
-    --     ,t.[RejectDate]
-    --     ,1                                                 [IsLatest]
-    --     ,t.[ApprovedIPDDayCount]
-    --     ,t.[ApprovedICUDayCount]
-    --     ,t.[DecisionResonId]
-    --     ,t.[DecisionRemark]
-    --     ,t.[Remark]
-    --     ,1                                                 [IsActive]
-    --     ,@UserId                                           [CreatedByUserId]
-    --     ,@D2                                               [CreatedDate]
-    --     ,@UserId                                           [UpdatedByUserId]
-    --     ,@D2                                               [UpdatedDate]
-    --FROM #Tmp t;
+    INSERT INTO [core].[CaseItem]
+               ([CaseItemId]
+               ,[CaseId]
+               ,[InputToStandardMappingId]
+               ,[StandardMedicalExpenseId]
+               ,[StandardMedicalExpenseBenefitId]
+               ,[Quantity]
+               ,[PerUnit]
+               ,[OriginalAmount]
+               ,[DiscountAmount]
+               ,[NetCaseAmount]
+               ,[MedicalTypeId]
+               ,[NonCoveredAmount]
+               ,[NonCoveredReasonId]
+               ,[ReceiptAmount]
+               ,[BodyPartId]
+               ,[Remark]
+               ,[IsActive]
+               ,[CreatedByUserId]
+               ,[CreatedDate]
+               ,[UpdatedByUserId]
+               ,[UpdatedDate]
+               ,[CaseItemReceiveRoundId])
+         SELECT
+               @CaseItemId CaseItemId
+               ,@CaseId CaseId
+               ,@InputToStandardMappingId InputToStandardMappingId
+               ,@StandardMedicalExpenseId StandardMedicalExpenseId
+               ,@StandardMedicalExpenseBenefitId StandardMedicalExpenseBenefitId
+               ,@Quantity Quantity
+               ,@PerUnit PerUnit
+               ,@NetPaidAmount OriginalAmount
+               ,0 DiscountAmount
+               ,@NetPaidAmount NetCaseAmount
+               ,@MedicalTypeId MedicalTypeId
+               ,0 NonCoveredAmount
+               ,NULL NonCoveredReasonId
+               ,0 ReceiptAmount
+               ,NULL BodyPartId
+               ,NULL Remark
+               ,1 IsActive
+               ,@UserId CreatedByUserId
+               ,@D2 CreatedDate
+               ,@UserId UpdatedByUserId
+               ,@D2 UpdatedDate
+               ,NEWID() CaseItemReceiveRoundId
+
+    INSERT INTO [process].[CaseItemAdjudication]
+               ([CaseItemAdjudicationId]
+               ,[CaseAdjudicationId]
+               ,[StandardMedicalExpenseId]
+               ,[CaseItemId]
+               ,[NetCaseAmount]
+               ,[EligibleAmount]
+               ,[ApprovedAmount]
+               ,[NonCoveredAmount]
+               ,[ExcessAmount]
+               ,[Remark]
+               ,[IsActive]
+               ,[CreatedByUserId]
+               ,[CreatedDate]
+               ,[UpdatedByUserId]
+               ,[UpdatedDate])
+         SELECT
+               NEWID() CaseItemAdjudicationId
+               ,@CaseAdjudicationId CaseAdjudicationId
+               ,@StandardMedicalExpenseId StandardMedicalExpenseId
+               ,@CaseItemId CaseItemId
+               ,@NetPaidAmount NetCaseAmount
+               ,0 EligibleAmount
+               ,@NetPaidAmount ApprovedAmount
+               ,0 NonCoveredAmount
+               ,0 ExcessAmount
+               ,NULL Remark
+               ,1 IsActive
+               ,@UserId CreatedByUserId
+               ,@D2 CreatedDate
+               ,@UserId UpdatedByUserId
+               ,@D2 UpdatedDate
+
+
     
     INSERT INTO [process].[CaseAdjustment]
     (
@@ -223,7 +183,7 @@ BEGIN TRY
         @CaseAdjustmentId       CaseAdjustmentId
         ,2                      AdjustmentTypeId
         ,@CaseId                CaseId
-        ,CaseAdjudicationId     CaseAdjudicationId
+        ,@CaseAdjudicationId    CaseAdjudicationId
         ,@D2                    AdjustmentDate
         ,@AdjustmentReasonId    AdjustmentReasonId
         ,@TotalNetPaidAmount    AdjustmentAmount
@@ -233,73 +193,7 @@ BEGIN TRY
         ,@UserId                UpdatedByUserId
         ,@D2                    UpdatedDate
         ,@Remark                Remark
-    FROM #Tmp
 
-    --INSERT INTO [process].[CasePayable]
-    --           ([CasePayableId]
-    --           ,[CaseId]
-    --           ,[CaseAdjudicationId]
-    --           ,[CaseAdjustmentId]
-    --           ,[PayableCategoryId]
-    --           ,[PayableStatusId]
-    --           ,[PayableAmount]
-    --           ,[TotalPaidAmount]
-    --           ,[OutstandingAmount]
-    --           ,[PayeeTypeId]
-    --           ,[ToBankId]
-    --           ,[ToBankName]
-    --           ,[ToBankAccountNo]
-    --           ,[IsActive]
-    --           ,[CreatedByUserId]
-    --           ,[CreatedDate]
-    --           ,[UpdatedByUserId]
-    --           ,[UpdatedDate])
-    --SELECT
-    -- @CasePayable           [CasePayableId]
-    -- ,@CaseId               CaseId
-    -- ,CaseAdjudicationId   CaseAdjudicationId
-    -- ,@CaseAdjustmentId     [CaseAdjustmentId]
-    -- ,PayableCategoryId    PayableCategoryId
-    -- ,2                     [PayableStatusId]
-    -- ,@TotalNetPaidAmount   [PayableAmount]
-    -- ,0                     [TotalPaidAmount]
-    -- ,@TotalNetPaidAmount   [OutstandingAmount]
-    -- ,PayeeTypeId          PayeeTypeId
-    -- ,@ToBankId             ToBankId
-    -- ,@ToBankName           ToBankName
-    -- ,@ToBankAccountNo      ToBankAccountNo
-    -- ,1                     [IsActive]
-    -- ,@UserId               [CreatedByUserId]
-    -- ,@D2                   [CreatedDate]
-    -- ,@UserId               [UpdatedByUserId]
-    -- ,@D2                   [UpdatedDate]
-    --FROM #Tmp
-
-    INSERT INTO [transaction].[TransactionLog]
-               ([TransactionLogId]
-               ,[ClaimId]
-               ,[CaseId]
-               ,[TransactionLogTypeId]
-               ,[ReferenceId]
-               ,[IsActive]
-               ,[Remark]
-               ,[CreatedByUserId]
-               ,[CreatedDate]
-               ,[UpdatedByUserId]
-               ,[UpdatedDate])
-    SELECT
-     NEWID()    [TransactionLogId]
-     ,ClaimId
-     ,@CaseId   [CaseId]
-     ,10        [TransactionLogTypeId]
-     ,NULL      [ReferenceId]
-     ,1         [IsActive]
-     ,NULL      [Remark]
-     ,@UserId   [CreatedByUserId]
-     ,@D2       [CreatedDate]
-     ,@UserId   [UpdatedByUserId]
-     ,@D2       [UpdatedDate]
-    FROM #Tmp
 
 	SET @IsResult	= 1;
 	SET @Msg		= N'บันทึก สำเร็จ';
@@ -331,6 +225,7 @@ comment this part if no return result */
     SELECT @IsResult IsResult
 		    ,@Result Result
 		    ,@Msg	 Msg
+            ,NEWID() CalimId
             ,@CaseAdjustmentId CaseAdjustmentId;
 
 END

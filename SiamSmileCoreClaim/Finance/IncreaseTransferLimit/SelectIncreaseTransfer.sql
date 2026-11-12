@@ -7,7 +7,8 @@ GO
      ,claim.ClaimNo
      ,claim.CreatedDate
      ,claim.CustomerName
-     
+     ,claim.IncidentDate
+
      ,payItem.NetPaidAmount
      --,adjust.AdjustmentAmount
     FROM core.[Case] [case]
@@ -20,3 +21,4 @@ GO
     INNER JOIN finance.Payment pay
         ON payItem.PaymentId = pay.PaymentId
     WHERE pay.PaymentStatusId = 3
+    AND [case].CoverageTypeId = 3
