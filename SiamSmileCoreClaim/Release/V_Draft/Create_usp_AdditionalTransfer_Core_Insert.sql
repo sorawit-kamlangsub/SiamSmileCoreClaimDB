@@ -74,12 +74,37 @@ BEGIN
 /* Setup Data*/
     DECLARE @CaseItemId UNIQUEIDENTIFIER;
     DECLARE @CaseAdjustmentId UNIQUEIDENTIFIER;
+    DECLARE @CaseItemReceiveRoundId UNIQUEIDENTIFIER;
 
     SET @CaseItemId = NEWID();
     SET @CaseAdjustmentId = NEWID();
+    SET @CaseItemReceiveRoundId = NEWID();
+
+    DECLARE @ReceiveRoundNo INT;
+
+    SELECT @ReceiveRoundNo = ISNULL(MAX(ReceiveRoundNo), 0) + 1
+    FROM [process].[CaseItemReceiveRound]
+    WHERE CaseId = @CaseId;
 
 BEGIN TRY
 	BEGIN TRANSACTION
+
+    INSERT INTO [process].[CaseItemReceiveRound]
+               ([CaseItemReceiveRoundId]
+               ,[CaseId]
+               ,[ReceiveRoundNo]
+               ,[ReceiveStep]
+               ,[HasCaseItems]
+               ,[CreatedByUserId]
+               ,[CreatedDate])
+         SELECT
+               @CaseItemReceiveRoundId  [CaseItemReceiveRoundId]
+               ,@CaseId                 [CaseId]
+               ,@ReceiveRoundNo         [ReceiveRoundNo]
+               ,'ApproveClaimDecision'  [ReceiveRoundNo]
+               ,1                       [HasCaseItems]
+               ,@UserId                 [CreatedByUserId]
+               ,@D2                     [CreatedDate] 
 
     INSERT INTO [core].[CaseItem]
                ([CaseItemId]
@@ -126,7 +151,7 @@ BEGIN TRY
                ,@D2 CreatedDate
                ,@UserId UpdatedByUserId
                ,@D2 UpdatedDate
-               ,NEWID() CaseItemReceiveRoundId
+               ,@CaseItemReceiveRoundId CaseItemReceiveRoundId
 
     INSERT INTO [process].[CaseItemAdjudication]
                ([CaseItemAdjudicationId]
@@ -150,7 +175,7 @@ BEGIN TRY
                ,@StandardMedicalExpenseId StandardMedicalExpenseId
                ,@CaseItemId CaseItemId
                ,@NetPaidAmount NetCaseAmount
-               ,0 EligibleAmount
+               ,@NetPaidAmount EligibleAmount
                ,@NetPaidAmount ApprovedAmount
                ,0 NonCoveredAmount
                ,0 ExcessAmount
@@ -186,7 +211,7 @@ BEGIN TRY
         ,@CaseAdjudicationId    CaseAdjudicationId
         ,@D2                    AdjustmentDate
         ,@AdjustmentReasonId    AdjustmentReasonId
-        ,@TotalNetPaidAmount    AdjustmentAmount
+        ,@NetPaidAmount         AdjustmentAmount
         ,1                      IsActive
         ,@UserId                CreatedByUserId
         ,@D2                    CreatedDate
@@ -194,6 +219,14 @@ BEGIN TRY
         ,@D2                    UpdatedDate
         ,@Remark                Remark
 
+    UPDATE m
+    SET m.CaseAmount = m.CaseAmount + @NetPaidAmount
+        ,m.LatestApprovedAmount = m.LatestApprovedAmount + @NetPaidAmount
+        ,m.UpdatedByUserId = @UserId
+        ,m.UpdatedDate = @D2
+    FROM [core].[Case] m
+    WHERE m.IsActive = 1
+    AND m.CaseId = @CaseId
 
 	SET @IsResult	= 1;
 	SET @Msg		= N'บันทึก สำเร็จ';
@@ -211,10 +244,6 @@ END CATCH
 -----------------------------------
 
 RESULT:
-
-/*Drop TempTable
-Comment below if not use TempTable*/
-	IF OBJECT_ID('tempdb..#Tmp') IS NOT NULL  DROP TABLE #Tmp;
 
 
 /*Return Result 
