@@ -8,10 +8,12 @@ GO
      ,claim.CreatedDate
      ,claim.CustomerName
      ,claim.IncidentDate
-
+     ,COUNT(pay.PaymentId) OVER () CountItem
      ,payItem.NetPaidAmount
      --,adjust.AdjustmentAmount
     FROM core.[Case] [case]
+    INNER JOIN core.[CaseItem] ci
+        ON [case].CaseId = ci.CaseId
     INNER JOIN core.Claim claim
         ON [case].ClaimId = claim.ClaimId
     INNER JOIN [process].CasePayable payable

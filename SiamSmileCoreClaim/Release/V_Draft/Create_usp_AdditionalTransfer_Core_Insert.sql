@@ -81,6 +81,7 @@ BEGIN
     SET @CaseItemReceiveRoundId = NEWID();
 
     DECLARE @ReceiveRoundNo INT;
+    DECLARE @OriginalAmount DECIMAL(16,2);
 
     SELECT @ReceiveRoundNo = ISNULL(MAX(ReceiveRoundNo), 0) + 1
     FROM [process].[CaseItemReceiveRound]
