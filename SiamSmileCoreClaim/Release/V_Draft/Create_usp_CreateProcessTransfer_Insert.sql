@@ -16,7 +16,7 @@ GO
 */
 -- Description:	Insert Process 
 -- =============================================
-CREATE PROCEDURE [finance].[usp_CreateProcessTransfer_Insert]
+ALTER PROCEDURE [finance].[usp_CreateProcessTransfer_Insert]
 /* Add the parameters for the stored procedure here
  comment if not receive parameter*/
 			@AdjustmentReasonId INT
@@ -250,36 +250,39 @@ BEGIN TRY
                ,@UserId UpdatedByUserId
                ,@D2 UpdatedDate
     
-    INSERT INTO [process].[CaseAdjustment]
-    (
-        [CaseAdjustmentId],
-        [AdjustmentTypeId],
-        [CaseId],
-        [CaseAdjudicationId],
-        [AdjustmentDate],
-        [AdjustmentReasonId],
-        [AdjustmentAmount],
-        [IsActive],
-        [CreatedByUserId],
-        [CreatedDate],
-        [UpdatedByUserId],
-        [UpdatedDate],
-        [Remark]
-    )
-    SELECT
-        @CaseAdjustmentId       CaseAdjustmentId
-        ,@AdjustmentTypeId      AdjustmentTypeId
-        ,@CaseId                CaseId
-        ,@CaseAdjudicationId    CaseAdjudicationId
-        ,@D2                    AdjustmentDate
-        ,@AdjustmentReasonId    AdjustmentReasonId
-        ,@NetPaidAmount         AdjustmentAmount
-        ,1                      IsActive
-        ,@UserId                CreatedByUserId
-        ,@D2                    CreatedDate
-        ,@UserId                UpdatedByUserId
-        ,@D2                    UpdatedDate
-        ,@Remark                Remark
+    IF @NetPaidAmount IS NOT NULL OR @NetPaidAmount <> 0
+    BEGIN
+        INSERT INTO [process].[CaseAdjustment]
+        (
+            [CaseAdjustmentId],
+            [AdjustmentTypeId],
+            [CaseId],
+            [CaseAdjudicationId],
+            [AdjustmentDate],
+            [AdjustmentReasonId],
+            [AdjustmentAmount],
+            [IsActive],
+            [CreatedByUserId],
+            [CreatedDate],
+            [UpdatedByUserId],
+            [UpdatedDate],
+            [Remark]
+        )
+        SELECT
+            @CaseAdjustmentId       CaseAdjustmentId
+            ,@AdjustmentTypeId      AdjustmentTypeId
+            ,@CaseId                CaseId
+            ,@CaseAdjudicationId    CaseAdjudicationId
+            ,@D2                    AdjustmentDate
+            ,@AdjustmentReasonId    AdjustmentReasonId
+            ,@NetPaidAmount         AdjustmentAmount
+            ,1                      IsActive
+            ,@UserId                CreatedByUserId
+            ,@D2                    CreatedDate
+            ,@UserId                UpdatedByUserId
+            ,@D2                    UpdatedDate
+            ,@Remark                Remark
+    END;
 
 	SET @IsResult	= 1;
 	SET @Msg		= N'บันทึก สำเร็จ';
@@ -307,8 +310,9 @@ comment this part if no return result */
     SELECT @IsResult IsResult
 		    ,@Result Result
 		    ,@Msg	 Msg
-            ,NEWID() CalimId
-            ,@CaseAdjustmentId CaseAdjustmentId;
+            ,@ClaimId CalimId
+            ,@CaseAdjustmentId CaseAdjustmentId
+            ,@CaseAdjudicationId CaseAdjudicationId;
 
 END
 GO

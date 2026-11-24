@@ -11,8 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "V_Draft", "V_Draft", "{61DA
 	ProjectSection(SolutionItems) = preProject
 		Release\V_Draft\Create_usp_AdditionalTransferMonitor_Select.sql = Release\V_Draft\Create_usp_AdditionalTransferMonitor_Select.sql
 		Release\V_Draft\Create_usp_CasePayable_Insert.sql = Release\V_Draft\Create_usp_CasePayable_Insert.sql
-		Release\V_Draft\Create_usp_FailedPayTransferTransaction_Select.sql = Release\V_Draft\Create_usp_FailedPayTransferTransaction_Select.sql
 		Release\V_Draft\Create_usp_CreateProcessTransfer_Insert.sql = Release\V_Draft\Create_usp_CreateProcessTransfer_Insert.sql
+		Release\V_Draft\Create_usp_FailedPayTransferTransaction_Select.sql = Release\V_Draft\Create_usp_FailedPayTransferTransaction_Select.sql
 		Release\V_Draft\Create_usp_GenerateCodeBE_Yearly.sql = Release\V_Draft\Create_usp_GenerateCodeBE_Yearly.sql
 		Release\V_Draft\Create_usp_InquiryMonitor_Select.sql = Release\V_Draft\Create_usp_InquiryMonitor_Select.sql
 	EndProjectSection
@@ -64,7 +64,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E2F11C40-31B2-F6BF-EDF1-F8536154594A}.Default|Default.ActiveCfg = Default
-		{6F67D6EE-BBFA-4EB2-AA04-956C1300F45E}.Default|Default.ActiveCfg = Default
+		{21599EF4-7A04-4E5D-8417-13F77ACE9DF0}.Default|Default.ActiveCfg = Default
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
