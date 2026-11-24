@@ -45,11 +45,11 @@
           <AssociatedConnUserName>devdba</AssociatedConnUserName>
           <FullPath>InsertRefundRequest.sql</FullPath>
         </FileNode>
-        <FileNode Name="usp_AdditionalTransferHeader_Insert.sql">
+        <FileNode Name="usp_CreateCoreTransfer_Insert.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:147.50.148.33:False:devdba</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>147.50.148.33</AssociatedConnSrvName>
           <AssociatedConnUserName>devdba</AssociatedConnUserName>
-          <FullPath>usp_AdditionalTransferHeader_Insert.sql</FullPath>
+          <FullPath>usp_CreateCoreTransfer_Insert.sql</FullPath>
         </FileNode>
       </Items>
     </LogicalFolder>
