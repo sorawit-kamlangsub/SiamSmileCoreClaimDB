@@ -10,7 +10,7 @@ GO
 -- Create date: 2026-11-12
 -- Description:	Increase Core
 -- =============================================
-CREATE PROCEDURE [finance].[usp_CreateCoreTransfer_Insert]
+ALTER PROCEDURE [finance].[usp_CreateCoreTransfer_Insert]
 	-- Add the parameters for the stored procedure here
 	@CaseId UNIQUEIDENTIFIER
     ,@CaseItemId UNIQUEIDENTIFIER
@@ -47,15 +47,15 @@ BEGIN
     DECLARE @InputToStandardMappingId INT;
     DECLARE @StandardMedicalExpenseId INT;
     DECLARE @StandardMedicalExpenseBenefitId INT;
-    DECLARE @Quantity DECIMAL(18, 2) = 1;
-    DECLARE @PerUnit DECIMAL(18, 2) = 0;
-    DECLARE @OriginalAmount DECIMAL(18, 2) = 0;
-    DECLARE @DiscountAmount DECIMAL(18, 2) = 0;
-    DECLARE @NetCaseAmount DECIMAL(18, 2) = 0;
+    DECLARE @Quantity INT;
+    DECLARE @PerUnit INT;
+    DECLARE @OriginalAmount DECIMAL(16, 2);
+    DECLARE @DiscountAmount DECIMAL(16, 2);
+    DECLARE @NetCaseAmount DECIMAL(16, 2);
     DECLARE @MedicalTypeId INT;
-    DECLARE @NonCoveredAmount DECIMAL(18, 2) = 0;
+    DECLARE @NonCoveredAmount DECIMAL(16, 2);
     DECLARE @NonCoveredReasonId INT;
-    DECLARE @ReceiptAmount DECIMAL(18, 2) = 0;
+    DECLARE @ReceiptAmount DECIMAL(16, 2);
     DECLARE @BodyPartId INT;
     DECLARE @CaseItemReceiveRoundId UNIQUEIDENTIFIER;
 
@@ -73,15 +73,15 @@ BEGIN
         @StandardMedicalExpenseBenefitId = [StandardMedicalExpenseBenefitId],
         @Quantity = [Quantity],
         @PerUnit = [PerUnit],
-        @OriginalAmount = [OriginalAmount],
+        @OriginalAmount = [OriginalAmount] + @NetPaidAmount,
         @DiscountAmount = [DiscountAmount],
-        @NetCaseAmount = [NetCaseAmount],
+        @NetCaseAmount = [NetCaseAmount] + @NetPaidAmount,
         @MedicalTypeId = [MedicalTypeId],
         @NonCoveredAmount = [NonCoveredAmount],
         @NonCoveredReasonId = [NonCoveredReasonId],
         @ReceiptAmount = [ReceiptAmount],
         @BodyPartId = [BodyPartId],
-        @CaseItemReceiveRoundId = [CaseItemReceiveRoundId] + 1
+        @CaseItemReceiveRoundId = [CaseItemReceiveRoundId]
     FROM [CoreClaim].[core].[CaseItem]
     WHERE [CaseId] = @CaseId;
 
