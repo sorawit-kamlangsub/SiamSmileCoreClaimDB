@@ -80,8 +80,7 @@ BEGIN
         @NonCoveredAmount = [NonCoveredAmount],
         @NonCoveredReasonId = [NonCoveredReasonId],
         @ReceiptAmount = [ReceiptAmount],
-        @BodyPartId = [BodyPartId],
-        @CaseItemReceiveRoundId = [CaseItemReceiveRoundId]
+        @BodyPartId = [BodyPartId]
     FROM [CoreClaim].[core].[CaseItem]
     WHERE [CaseId] = @CaseId;
 
@@ -145,7 +144,7 @@ BEGIN TRY
                ,[UpdatedDate]
                ,[CaseItemReceiveRoundId])
     SELECT
-        @CaseItemId,
+        NEWID(),
         @CaseId,
         @InputToStandardMappingId,
         @StandardMedicalExpenseId,
