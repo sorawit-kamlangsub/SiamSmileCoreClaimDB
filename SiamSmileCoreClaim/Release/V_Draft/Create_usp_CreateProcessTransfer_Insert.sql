@@ -28,22 +28,24 @@ ALTER PROCEDURE [finance].[usp_CreateProcessTransfer_Insert]
             ,@UserId INT
             ,@Remark NVARCHAR(500)
             ,@RoundNo INT
+            ,@TotalNetPaidAmount DECIMAL(16,2)
 AS
 BEGIN
 /*SET NOCOUNT ON added to prevent extra result sets from interfering with SELECT statements.*/
 	SET NOCOUNT ON;
 
 /*Test Zone
-    DECLARE @AdjustmentReasonId INT
-            ,@TotalNetPaidAmount DECIMAL(16,2)
+			DECLARE
+            @AdjustmentReasonId INT
+            ,@AdjustmentTypeId INT
+            ,@CaseItemId UNIQUEIDENTIFIER
+            ,@CaseRefundId UNIQUEIDENTIFIER
+            ,@NetPaidAmount DECIMAL(16,2)
             ,@CaseId UNIQUEIDENTIFIER
             ,@UserId INT
-            ,@Remark NVARCHAR(500);
-            ;
-    SET @UserId = 1;
-    SET @AdjustmentReasonId = 2;
-    SET @TotalNetPaidAmount = 203;
-    SET @CaseId = 'D0987F5A-C10D-4590-9C37-7348F13CB4DE';
+            ,@Remark NVARCHAR(500)
+            ,@RoundNo INT
+            ,@TotalNetPaidAmount DECIMAL(16,2)
 */
 
 	DECLARE @D2		DATETIME2(7);
@@ -71,9 +73,6 @@ BEGIN
     DECLARE @CaseAdjustmentId UNIQUEIDENTIFIER; 
     DECLARE @CaseAdjudicationId UNIQUEIDENTIFIER
     DECLARE @StandardMedicalExpenseId INT;
-
-    SET @CaseAdjustmentId = NEWID();
-    SET @CaseAdjudicationId = NEWID();
 
     DECLARE @ClaimId UNIQUEIDENTIFIER
            ,@VersionNo INT
@@ -135,6 +134,10 @@ BEGIN
         INNER JOIN core.[Case] [case]
             ON adju.CaseId = [case].CaseId
         WHERE adju.CaseId = @CaseId
+
+    SET @CaseAdjustmentId = NEWID();
+    SET @CaseAdjudicationId = NEWID();
+
     END;
 
     SELECT 
@@ -250,7 +253,7 @@ BEGIN TRY
                ,@UserId UpdatedByUserId
                ,@D2 UpdatedDate
     
-    IF @NetPaidAmount IS NOT NULL OR @NetPaidAmount <> 0
+    IF @TotalNetPaidAmount IS NOT NULL OR @TotalNetPaidAmount <> 0
     BEGIN
         INSERT INTO [process].[CaseAdjustment]
         (
