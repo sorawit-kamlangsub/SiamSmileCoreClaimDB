@@ -17,6 +17,7 @@ ALTER PROCEDURE [finance].[usp_CreateCoreTransfer_Insert]
     ,@NetPaidAmount DECIMAL(16,2)
     ,@UserId INT
     ,@Remark NVARCHAR(500)
+    ,@CaseItemReceiveRoundId UNIQUEIDENTIFIER
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -57,15 +58,6 @@ BEGIN
     DECLARE @NonCoveredReasonId INT;
     DECLARE @ReceiptAmount DECIMAL(16, 2);
     DECLARE @BodyPartId INT;
-    DECLARE @CaseItemReceiveRoundId UNIQUEIDENTIFIER;
-
-    SET @CaseItemReceiveRoundId = NEWID();
-
-    DECLARE @ReceiveRoundNo INT;
-
-    SELECT @ReceiveRoundNo = ISNULL(MAX(ReceiveRoundNo), 0) + 1
-    FROM [process].[CaseItemReceiveRound]
-    WHERE CaseId = @CaseId;
 
     SELECT
         @InputToStandardMappingId = [InputToStandardMappingId],
@@ -82,7 +74,7 @@ BEGIN
         @ReceiptAmount = [ReceiptAmount],
         @BodyPartId = [BodyPartId]
     FROM [CoreClaim].[core].[CaseItem]
-    WHERE [CaseId] = @CaseId;
+    WHERE [CaseItemId] = @CaseItemId;
 
 
 /* Validate Data */
@@ -102,23 +94,6 @@ BEGIN TRY
         ,m.UpdatedByUserId = @UserId
     FROM [core].[case] m
     WHERE m.CaseId = @CaseId
-
-    INSERT INTO [process].[CaseItemReceiveRound]
-               ([CaseItemReceiveRoundId]
-               ,[CaseId]
-               ,[ReceiveRoundNo]
-               ,[ReceiveStep]
-               ,[HasCaseItems]
-               ,[CreatedByUserId]
-               ,[CreatedDate])
-         SELECT
-               @CaseItemReceiveRoundId  [CaseItemReceiveRoundId]
-               ,@CaseId                 [CaseId]
-               ,@ReceiveRoundNo         [ReceiveRoundNo]
-               ,'ApproveClaimDecision'  [ReceiveRoundNo]
-               ,1                       [HasCaseItems]
-               ,@UserId                 [CreatedByUserId]
-               ,@D2   
 
     INSERT INTO [core].[CaseItem]
                ([CaseItemId]
@@ -193,7 +168,7 @@ comment this part if no return result */
     SELECT @IsResult IsResult
 		    ,@Result Result
 		    ,@Msg	 Msg
-            ,@ClaimId CalimId;
+            ,@ClaimId ClaimId;
 
 END
 GO
